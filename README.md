@@ -1,6 +1,6 @@
 # WumpusWorld - Independent Research Project
-##Project's name: Explore the Development of A NEAT Multi-Agent Wumpus World
-##Author: Truong Nguyen Huy
+## Project's name: Explore the Development of A NEAT Multi-Agent Wumpus World
+### Author: Truong Nguyen Huy
 
 ![Login screen](login.PNG)
 
