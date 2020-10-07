@@ -14,4 +14,4 @@ This research will first, focus on implementing the propositional logic and Neur
 
 ![Simulation scene](simulation.png)
 
-##### Figure 2: A randomly generated simulation scene. In this scene, the human agent is right below the wumpus agent (notice that the human is sensing a stench)
+##### Figure 2: A randomly generated simulation scene. In this scene, the human agent is right below the wumpus agent (notice that the human is sensing a stench and the wumpus is feeling a bump because it tried to move right and hit the world border)
