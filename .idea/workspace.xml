@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f6c11a08-4159-4dfb-bb99-bd0c1522becf" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Environment/Maze.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Environment/MazeGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Environment/ResultController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/css/SimulationStyle.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/brownsoil.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/down0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/down1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/down2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/grasssoil.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/left0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/left1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/left2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/pit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/right0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/right1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/right2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/sandsoil.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/tree9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/up0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/up1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/up2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wdown0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wdown1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wdown2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wleft0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wleft1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wleft2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wright0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wright1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wright2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wup0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wup1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/wup2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/DataStructures/RandomHashSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/DataStructures/RandomHashSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/DataStructures/RandomSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/DataStructures/RandomSelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/Genome/ConnectionGene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/Genome/ConnectionGene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/Genome/Gene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/Genome/Gene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/Genome/Genome.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/Genome/Genome.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/Genome/NodeGene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/Genome/NodeGene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Neat/Neat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Neat/Neat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/Environment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/Environment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/Simulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/SimulationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/SimulationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/Sprite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/Sprite.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/Try.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/Try.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Environment/WorldDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Environment/WorldDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Human/Human.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Human/Human.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Human/HumanActionSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Human/HumanActionSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Wumpus/Wumpus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Wumpus/Wumpus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Wumpus/WumpusActionSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Wumpus/WumpusActionSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/css/LoginStyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/css/LoginStyle.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/Gold.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/Gold.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/Human.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/Soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/Wumpus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/view/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/view/login.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/view/simulation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/view/simulation.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Agent/ActionSet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Agent/Agent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Agent/AgentFunction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Agent/InnerPerceivedData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Environment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/Environment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/LoginController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Simulation$StateList.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Simulation$StateNode.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Simulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/Simulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/SimulationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/SimulationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Sprite.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/Sprite.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Try$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Try$AnimatedImage.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/Try.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/Try.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Environment/WorldDriver.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Environment/WorldDriver.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Wumpus/WumpusActionSet.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Wumpus/WumpusActionSet.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Wumpus/WumpusAgent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Wumpus/WumpusAgentFunction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Wumpus/WumpusInnerPerceivedData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/css/LoginStyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/css/LoginStyle.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/images/Gold.png" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/images/Gold.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/images/Human.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/images/Soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/images/Wumpus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/view/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/view/login.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/view/simulation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/view/simulation.fxml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1aTgMZWlHpHdl5tcmSki1dbXZlf" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="restartRequiresConfirmation" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Andyj\Desktop\MyWumpusWorld\src\main\java" />
+      <recent name="C:\Users\Andyj\Desktop\research\MyWumpusWorld\src\main" />
+      <recent name="C:\Users\Andyj\Desktop\research\MyWumpusWorld\src\main\java" />
+      <recent name="C:\Users\Andyj\Desktop\research\MyWumpusWorld\src\main\resources\view" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.WorldDriver">
+    <configuration name="MazeGenerator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Environment.MazeGenerator" />
+      <module name="MyWumpusWorld" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Environment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Neat" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Neat.Neat" />
+      <module name="MyWumpusWorld" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Neat.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StdDraw" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Environment.StdDraw" />
+      <module name="MyWumpusWorld" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Environment.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Try" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Environment.Try" />
+      <module name="MyWumpusWorld" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Neat.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WorldDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Environment.WorldDriver" />
+      <module name="MyWumpusWorld" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Neat.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.WorldDriver" />
+        <item itemvalue="Application.MazeGenerator" />
+        <item itemvalue="Application.Try" />
+        <item itemvalue="Application.StdDraw" />
+        <item itemvalue="Application.Neat" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f6c11a08-4159-4dfb-bb99-bd0c1522becf" name="Default Changelist" comment="" />
+      <created>1586764951087</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1586764951087</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="511" y="215" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1601414298494">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="511" y="215" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1601414298494" />
+    <state x="574" y="122" key="#com.intellij.ide.util.MemberChooser" timestamp="1601702549333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="574" y="122" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1601702549333" />
+    <state x="428" y="338" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1600471057869">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="428" y="338" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1536.824@0.0.1536.824" timestamp="1600471057869" />
+    <state x="499" y="159" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1601702151625">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="499" y="159" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.824@0.0.1536.824" timestamp="1601702151625" />
+    <state width="1493" height="86" key="GridCell.Tab.0.bottom" timestamp="1602083567725">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="86" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1602083567725" />
+    <state width="1493" height="86" key="GridCell.Tab.0.center" timestamp="1602083567723">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="86" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1602083567723" />
+    <state width="1493" height="86" key="GridCell.Tab.0.left" timestamp="1602083567723">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="86" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1602083567723" />
+    <state width="1493" height="86" key="GridCell.Tab.0.right" timestamp="1602083567725">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="86" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1602083567725" />
+    <state width="1493" height="261" key="GridCell.Tab.1.bottom" timestamp="1601138274119">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="261" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1601138274119" />
+    <state width="1493" height="261" key="GridCell.Tab.1.center" timestamp="1601138274119">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="261" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1601138274119" />
+    <state width="1493" height="261" key="GridCell.Tab.1.left" timestamp="1601138274119">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="261" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1601138274119" />
+    <state width="1493" height="261" key="GridCell.Tab.1.right" timestamp="1601138274119">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1601138274119" />
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1602100618528">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1602100618528" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1601973919129">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1601973919129" />
+  </component>
+</project>

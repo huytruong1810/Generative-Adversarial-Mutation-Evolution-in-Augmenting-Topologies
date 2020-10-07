@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.Pane?>
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Environment.SimulationController">
+
+    <VBox fx:id="MenuBox">
+        <Button text="Exit" onAction="#exitApplication"/>
+        <Button text="New" onAction="#restartApplication"/>
+    </VBox>
+
+    <HBox fx:id="MainBox">
+
+        <StackPane>
+            <Group fx:id="RootGroup">
+                <Canvas fx:id="WorldCanvas" />
+            </Group>
+            <Button text="Next step" onAction="#runNextStep" />
+        </StackPane>
+
+        <VBox>
+            <Pane><Label text="Human Percept" /></Pane>
+            <VBox>
+                <HBox>
+                    <StackPane>
+                        <Circle fx:id="hBump" radius="50" />
+                        <Label text="bump" />
+                    </StackPane>
+                    <StackPane>
+                        <Circle fx:id="glitter" radius="50" />
+                        <Label text="glitter" />
+                    </StackPane>
+                    <StackPane>
+                        <Circle fx:id="breeze" radius="50" />
+                        <Label text="breeze" />
+                    </StackPane>
+                </HBox>
+                <HBox>
+                    <StackPane>
+                        <Circle fx:id="stench" radius="50" />
+                        <Label text="stench" />
+                    </StackPane>
+                    <StackPane>
+                        <Circle fx:id="scream" radius="50" />
+                        <Label text="scream" />
+                    </StackPane>
+                </HBox>
+            </VBox>
+            <Pane><Label fx:id="hStat" text="...Stat..." /></Pane>
+            <Pane><Label text="Wumpus Percept" /></Pane>
+            <VBox>
+                <HBox>
+                    <StackPane>
+                        <Circle fx:id="wBump" radius="50" />
+                        <Label text="bump" />
+                    </StackPane>
+                    <StackPane>
+                        <Circle fx:id="scentInt" radius="50" />
+                        <Label fx:id="scentIntText" text="0"/>
+                    </StackPane>
+                    <StackPane>
+                        <Circle fx:id="scentDir" radius="50" />
+                        <Label fx:id="scentDirText" text="null" />
+                    </StackPane>
+                </HBox>
+            </VBox>
+            <Pane><Label fx:id="wStat" text="...Stat..." /></Pane>
+        </VBox>
+
+    </HBox>
+
+</HBox>
