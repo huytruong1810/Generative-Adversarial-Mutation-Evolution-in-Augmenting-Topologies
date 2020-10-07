@@ -1,6 +1,7 @@
 # WumpusWorld - Independent Research Project
 ## Project's name: Explore the Development of A NEAT Multi-Agent Wumpus World
-##### Author: Truong Nguyen Huy
+#### Author: Truong Nguyen Huy
+#### At University of Illinois at Chicago
 
 ![Login screen](login.PNG)
 
