@@ -8,5 +8,5 @@ The utility for the human agent is to maximize its performance measure by reachi
 
 This research will first, focus on implementing the propositional logic and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm with regards to the model's design. This is expected to be done by the end of the Fall 2020 semester. In the second phase of the research, which is the final phase occurring in Spring 2021, the model will be run, tested, and supervised for further development to observe how the agents behave and become "successful" in this competitive environment.
 
-![Login screen](login.png)
+![Login screen](login.PNG)
 ![Simulation scene](simulation.png)
