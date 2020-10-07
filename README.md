@@ -1,8 +1,10 @@
 # WumpusWorld - Independent Research Project
 ## Project's name: Explore the Development of A NEAT Multi-Agent Wumpus World
-### Author: Truong Nguyen Huy
+##### Author: Truong Nguyen Huy
 
 ![Login screen](login.PNG)
+
+##### Figure 1: The login screen of the program. User can specify the world' size, number of trials, and number of time steps for the simulation
 
 This research is based on the Wumpus World concept in Artificial Intelligence by Michael Genesereth and Wumpuslite model designed in Java by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC. Under Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model's environment simulation by giving the Wumpus a baseline agent paradigm.
 
@@ -11,3 +13,5 @@ The utility for the human agent is to maximize its performance measure by reachi
 This research will first, focus on implementing the propositional logic and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm with regards to the model's design. This is expected to be done by the end of the Fall 2020 semester. In the second phase of the research, which is the final phase occurring in Spring 2021, the model will be run, tested, and supervised for further development to observe how the agents behave and become "successful" in this competitive environment.
 
 ![Simulation scene](simulation.png)
+
+##### Figure 2: A randomly generated simulation scene. In this scene, the human agent is right below the wumpus agent (notice that the human is sensing a stench)
