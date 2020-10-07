@@ -3,7 +3,7 @@
 #### Author: Truong Nguyen Huy
 #### At University of Illinois at Chicago
 
-![Login screen](src\main\resources\images\login.PNG)
+![Login screen](src/main/resources/images/login.PNG)
 
 ##### Figure 1: The login screen of the program. User can specify the world' size, number of trials, and number of time steps for the simulation
 
@@ -13,6 +13,6 @@ The utility for the human agent is to maximize its performance measure by reachi
 
 This research will first, focus on implementing the propositional logic and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm with regards to the model's design. This is expected to be done by the end of the Fall 2020 semester. In the second phase of the research, which is the final phase occurring in Spring 2021, the model will be run, tested, and supervised for further development to observe how the agents behave and become "successful" in this competitive environment.
 
-![Simulation scene](src\main\resources\images\simulation.png)
+![Simulation scene](src/main/resources/images/simulation.png)
 
 ##### Figure 2: A randomly generated simulation scene. In this scene, the human agent is right below the wumpus agent (notice that the human is sensing a stench and the wumpus is feeling a bump because it tried to move right and hit the world border)
