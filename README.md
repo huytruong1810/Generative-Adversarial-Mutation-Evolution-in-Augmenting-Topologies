@@ -13,10 +13,10 @@ The utility for the human agent is to maximize its performance measure by reachi
 
 This research will first, focus on implementing the propositional logic and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm with regards to the model's design. This is expected to be done by the end of the Fall 2020 semester. In the second phase of the research, which is the final phase occurring in Spring 2021, the model will be run, tested, and supervised for further development to observe how the agents behave and become "successful" in this competitive environment.
 
-![NEAT Lab scene](src/main/resources/images/labUI.png)
+![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 
 ##### Figure 2: The NEAT Lab that the user can evolve, reset, view, etc. the NEAT population of neural networks for the human's agent function
 
-![Simulation scene](src/main/resources/images/simUI.png)
+![Simulation scene](src/main/resources/images/simUI.PNG)
 
 ##### Figure 3: A randomly generated simulation scene.
