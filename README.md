@@ -10,6 +10,8 @@ Wumpus World Background and research expectation:
 
 The utility for the human agent is to maximize its performance measure by reaching the gold while maintaining the highest possible score, which is calculated based on a reward/penalty system. The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while maintaining its highest possible score, which is also calculated based on its respective reward/penalty system. The agents competing in this environment are expected to perform logical reasoning in order to maximize their respective scores. At a minimum, the agents are expected to have the capabilities of learning, and knowledge-based agent models.
 
+###### Notice: These files do not contain all of the coded work (for example, NEAT drivers, A2C drivers have been removed) due to the research's security.
+
 
 ![Login screen](src/main/resources/images/loginUI.PNG)
 
