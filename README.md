@@ -3,14 +3,14 @@
 #### Author: Truong Nguyen Huy
 #### At University of Illinois at Chicago
 
-This research is based on the Wumpus World concept in Artificial Intelligence by Michael Genesereth and Wumpuslite model designed in Java by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm. Under Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model's environment simulation by giving the Wumpus a baseline agent paradigm.
+This research is based on the Wumpus World concept in Artificial Intelligence by Michael Genesereth, Wumpuslite model designed in Java by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC, and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm. Under Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model's environment simulation by giving the Wumpus a baseline agent paradigm.
 
 Wumpus World Background and research expectation:
 The utility for the human agent is to maximize its performance measure by reaching the gold while maintaining the highest possible score, which is calculated based on a reward/penalty system. The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while maintaining its highest possible score, which is also calculated based on its respective reward/penalty system. The agents competing in this environment are expected to perform logical reasoning in order to maximize their respective scores. At a minimum, the agents are expected to have the capabilities of learning, and knowledge-based agent models.
 
 ![Login screen](src/main/resources/images/loginUI.PNG)
 
-##### Figure 1: This is the login screen of the program. User can specify the world' size, dimention of the 2D square grid world; number of trials, how many time the NEAT population is resetted and started anew; number of time steps, how long the environment will exist for; max population, the max number of individal neural networks in the NEAT population at any given time; and number of episodes, the number of lives each neural network gets to improve itself using Advantage Actor-Critic method. 
+##### Figure 1: This is the login screen of the program. User can specify the world' size, dimension of the 2D square grid world; number of trials, how many time the NEAT population is resetted and started anew; number of time steps, how long the environment will exist for; max population, the max number of individal neural networks in the NEAT population at any given time; and number of episodes, the number of lives each neural network gets to improve itself using Advantage Actor-Critic method. 
 
 The first step of this research was to implement NeuroEvolution of Augmenting Topologies (NEAT) algorithm by Ken Stanley (to learn more, please read research paper at http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf). These neural networks are to be used to express the human's agent function. The NEAT Driver and UI Controllers had been completed by Fall 2020.
 
