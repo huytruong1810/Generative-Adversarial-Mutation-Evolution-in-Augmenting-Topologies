@@ -20,7 +20,7 @@ The first step of this research was to implement NeuroEvolution of Augmenting To
 
 ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 
-##### Figure 2: The NEAT Lab that the user can evolve, reset, view, etc. the NEAT population of neural networks for the human's agent function
+##### Figure 2: The NEAT Lab that the user can evolve, reset, view, etc. the NEAT population of neural networks for the human's agent function. The neural network being spotlighted on screen is the fittest network after 100 evolution steps. Each network in the population has 5 input nodes taking the 5 inputs from the evironment state return and 6 output nodes (5 of them being the action probability distribution using softmax activation and 1 being the Critic's state-value opinion using linear activation).
 
 
 The second step was to implement the Wumpus environment and Advantage Actor-Critic (A2C) algorithm, which is the basis for competition in the NEAT population. In brief, in each evolution step, each neural networks in the population will be trained on the Wumpus environment using Advantage Actor-Critic method for a number of episose. Successful NEAT species and networks will be selected for reproduction and offsrings will be added to the places where weak individuals were evicted from the population (maintaining a constant amount of individuals in the population). Networks with close genetic relations will be grouped in species and will only compete within their respective species to preserve newly developed architectual mutations. The Wumpus Simulation Driver and UI Controllers had been completed by Winter 2020 and have been merged successfully with the NEAT Driver and UI Controllers.
