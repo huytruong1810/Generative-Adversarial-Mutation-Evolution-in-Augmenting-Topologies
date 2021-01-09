@@ -34,31 +34,31 @@ public class Sprite {
 
         up = new Timeline(); right = new Timeline(); down = new Timeline(); left = new Timeline();
 
-        up.getKeyFrames().add(new KeyFrame(Duration.millis(100), (ActionEvent e) -> Up.getChildren().setAll(Up0)));
-        up.getKeyFrames().add(new KeyFrame(Duration.millis(200), (ActionEvent e) -> Up.getChildren().setAll(Up1)));
-        up.getKeyFrames().add(new KeyFrame(Duration.millis(300), (ActionEvent e) -> Up.getChildren().setAll(Up2)));
-        right.getKeyFrames().add(new KeyFrame(Duration.millis(100), (ActionEvent e) -> Right.getChildren().setAll(Right0)));
-        right.getKeyFrames().add(new KeyFrame(Duration.millis(200), (ActionEvent e) -> Right.getChildren().setAll(Right1)));
-        right.getKeyFrames().add(new KeyFrame(Duration.millis(300), (ActionEvent e) -> Right.getChildren().setAll(Right2)));
-        down.getKeyFrames().add(new KeyFrame(Duration.millis(100), (ActionEvent e) -> Down.getChildren().setAll(Down0)));
-        down.getKeyFrames().add(new KeyFrame(Duration.millis(200), (ActionEvent e) -> Down.getChildren().setAll(Down1)));
-        down.getKeyFrames().add(new KeyFrame(Duration.millis(300), (ActionEvent e) -> Down.getChildren().setAll(Down2)));
-        left.getKeyFrames().add(new KeyFrame(Duration.millis(100), (ActionEvent e) -> Left.getChildren().setAll(Left0)));
-        left.getKeyFrames().add(new KeyFrame(Duration.millis(200), (ActionEvent e) -> Left.getChildren().setAll(Left1)));
-        left.getKeyFrames().add(new KeyFrame(Duration.millis(300), (ActionEvent e) -> Left.getChildren().setAll(Left2)));
+        up.getKeyFrames().add(new KeyFrame(Duration.millis(50), (ActionEvent e) -> Up.getChildren().setAll(Up0)));
+        up.getKeyFrames().add(new KeyFrame(Duration.millis(150), (ActionEvent e) -> Up.getChildren().setAll(Up1)));
+        up.getKeyFrames().add(new KeyFrame(Duration.millis(250), (ActionEvent e) -> Up.getChildren().setAll(Up2)));
+        right.getKeyFrames().add(new KeyFrame(Duration.millis(50), (ActionEvent e) -> Right.getChildren().setAll(Right0)));
+        right.getKeyFrames().add(new KeyFrame(Duration.millis(150), (ActionEvent e) -> Right.getChildren().setAll(Right1)));
+        right.getKeyFrames().add(new KeyFrame(Duration.millis(250), (ActionEvent e) -> Right.getChildren().setAll(Right2)));
+        down.getKeyFrames().add(new KeyFrame(Duration.millis(50), (ActionEvent e) -> Down.getChildren().setAll(Down0)));
+        down.getKeyFrames().add(new KeyFrame(Duration.millis(150), (ActionEvent e) -> Down.getChildren().setAll(Down1)));
+        down.getKeyFrames().add(new KeyFrame(Duration.millis(250), (ActionEvent e) -> Down.getChildren().setAll(Down2)));
+        left.getKeyFrames().add(new KeyFrame(Duration.millis(50), (ActionEvent e) -> Left.getChildren().setAll(Left0)));
+        left.getKeyFrames().add(new KeyFrame(Duration.millis(150), (ActionEvent e) -> Left.getChildren().setAll(Left1)));
+        left.getKeyFrames().add(new KeyFrame(Duration.millis(250), (ActionEvent e) -> Left.getChildren().setAll(Left2)));
 
         up.play(); right.play(); down.play(); left.play();
 
-        up.setCycleCount(10); right.setCycleCount(10); down.setCycleCount(10); left.setCycleCount(10);
+        up.setCycleCount(8); right.setCycleCount(8); down.setCycleCount(8); left.setCycleCount(8);
 
         tUp = new TranslateTransition(); tRight = new TranslateTransition(); tDown = new TranslateTransition(); tLeft = new TranslateTransition();
 
         tUp.setNode(Up); tRight.setNode(Right); tDown.setNode(Down); tLeft.setNode(Left);
 
-        tUp.setDuration(Duration.millis(3000));
-        tRight.setDuration(Duration.millis(3000));
-        tDown.setDuration(Duration.millis(3000));
-        tLeft.setDuration(Duration.millis(3000));
+        tUp.setDuration(Duration.millis(2000));
+        tRight.setDuration(Duration.millis(2000));
+        tDown.setDuration(Duration.millis(2000));
+        tLeft.setDuration(Duration.millis(2000));
 
     }
 

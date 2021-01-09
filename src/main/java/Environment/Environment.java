@@ -204,7 +204,7 @@ public class Environment {
 				for (int i = hX + 1; i < size; ++i)
 					if (wX == i && wY == hY) return true; break;
 			case 'W':
-				for (int i = 0; i < hY - 1; --i)
+				for (int i = 0; i < hY - 1; ++i)
 					if (wX == hX && wY == i) return true; break;
 		}
 		return false;

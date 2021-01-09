@@ -1,49 +1,51 @@
 package Environment;
 
 import Human.*;
+import Neat.Genome.Genome;
 import Wumpus.*;
+
+import static Environment.RewardSystem.*;
 
 public class Simulation {
 
-	// reward for both
-	private final int bumpCost = -1;
-	private final int actionCost = -1;
-
-	// reward for human
-	private final int goldReward = 1000;
-	private final int deathCost = -1000;
-	private final int shootCost = -10;
-	private int hScore = 0;
-	private int hTakenAction = 0;
-
-	// reward for wumpus
-	private final int killReward = 1000;
-	private final int lostCost = -1000;
-	private int wScore = 0;
-	private int wTakenAction = 0;
-
-	// agent attributes
+	// human attributes
 	private Human human;
+	private int hScore;
+	private int hTakenAction;
+	private double[] hActorThought;
+	private double hCriticThought, hTDTarget;
+
+	// wumpus attributes
 	private Wumpus wumpus;
+	private int wScore;
+	private int wTakenAction;
 
 	// simulation attributes
-	private int timeSteps;
-	private int stepCounter;
+	private int timeSteps, stepCounter, worldSize;
 	private Environment environment;
 
-	public Simulation(Environment E, int time) {
-
-		stepCounter = 1;
-		environment = E;
-		timeSteps = time;
-		human = new Human(environment);
-		wumpus = new Wumpus(environment);
-
+	public Simulation(int s, int t) {
+		worldSize = s;
+		timeSteps = t;
 	}
 
+	public String getHActorThought() {
+		String thought = "[ ";
+		for (int i = 0; i < 5; ++i) thought += (Math.round(hActorThought[i] * 100.0) / 100.0) + " ";
+		return thought + "]";
+	}
+	public String getHCriticThought() { return Double.toString(Math.round(hCriticThought * 100.0) / 100.0); }
+	public String getHTDTarget() { return Double.toString(Math.round(hTDTarget * 100.0) / 100.0); }
 	public int getHScore() { return hScore; }
+
+	public String getWActorThought() { return null; }
+	public String getWCriticThought() { return null; }
+	public String getWTDTarget() { return null; }
 	public int getWScore() { return wScore; }
+
+	public int getTimeSteps() { return timeSteps; }
 	public int getStepCounter() { return stepCounter; }
+
 	public Environment getEnvironment() { return environment; }
 
 	public String getHAction() {
@@ -73,124 +75,141 @@ public class Simulation {
 	}
 
 	/**
-	 * @return
-	 * -2: game ends without any agent winning
-	 * -1: agent dies
+	 * reset the simulation
+	 * @param bp - the blueprint for the env
+	 * @param hg - the human genome
+	 * @param wg - the wumpus genome
+	 */
+	public void reset(char[][][] bp, Genome hg, Genome wg) {
+
+		stepCounter = 1;
+		hScore = hTakenAction = wScore = wTakenAction = 0;
+
+		environment = new Environment(worldSize, bp);
+		human = new Human(environment, hg);
+		wumpus = new Wumpus(environment);
+
+	}
+
+	/**
+	 * @return integer indicating the result of a step:
+	 * -2: time's up
+	 * -1: human dies
 	 * 0: everything is good
-	 * 1: agent wins
+	 * 1: human wins
 	 * 2: wumpus wins
 	 */
-	public int runTimeStep() {
+	public int step() {
+
+		int done = 0; // initially assume everything is good
 
 		if (stepCounter == timeSteps) {
 			human.terminate();
 			wumpus.terminate();
 			hTakenAction = HumanActionSet.SELF_TERMINATE;
 			wTakenAction = WumpusActionSet.SELF_TERMINATE;
-			return -2;
+			done = -2; // out of time
 		}
 
-		hTakenAction = human.think();
-		if (wumpus.dead()) wTakenAction = WumpusActionSet.NO_OP;
-		else wTakenAction = wumpus.think();
+		hTakenAction = human.think(); // sample human's action
+		hActorThought = human.getActorThought(); // cache actor's opinion
+
+		wTakenAction = wumpus.dead() ? WumpusActionSet.NO_OP : wumpus.think(); // sample wumpus's action
 
 		if (environment.thereIsScream()) environment.setScream(false);
 		if (environment.thereIsHWall()) environment.setHWall(false);
 		if (environment.thereIsWWall()) environment.setWWall(false);
 
-		actuateHumanAction(hTakenAction);
-		actuateWumpusAction(wTakenAction);
+		int hReward = actuateHAction(hTakenAction); // sample reward for human
+		int wReward = actuateWAction(wTakenAction); // sample reward for wumpus
 
 		environment.regulateHumanScent();
 		environment.updateHumanInfo(human);
 		environment.updateWumpusInfo(wumpus);
 
 		if (environment.humanInPit()) {
-			hScore += deathCost;
-			return -1;
+			hReward += deathCost;
+			done = -1; // human died
 		}
 		if (environment.wumpusWithHuman() && !wumpus.dead()) {
-			hScore += deathCost;
-			wScore += killReward;
-			return 2;
+			hReward += deathCost;
+			wReward += killReward;
+			done = 2; // wumpus won
 		}
 		if (human.haveGold()) {
-			hScore += goldReward;
-			wScore += lostCost;
-			return 1;
+			hReward += goldReward;
+			wReward += lostCost;
+			done = 1; // human won
 		}
 
-		// none of ending condition is met so increment step
-		stepCounter += 1;
-		return 0;
+		human.learn(hReward, hTakenAction); // update human
+		hCriticThought = human.getCriticThought(); // cache critic's opinion
+		hTDTarget = human.getTDTarget(); // cache bootstrapped target state-value
+
+		// update wumpus
+
+		// accumulate rewards as scores
+		hScore += hReward;
+		wScore += wReward;
+		// go to next step if all is good
+		if (done == 0) stepCounter += 1;
+		return done;
 
 	}
 
-	public void actuateHumanAction(int action) {
+	private int actuateHAction(int action) {
 
-		if (action == HumanActionSet.MOVE_FORWARD) {
-			hScore += actionCost;
-			if (human.moveForward() == false) {
-				environment.setHWall(true);
-				hScore += bumpCost;
-			}
-		}
-		else if (action == HumanActionSet.TURN_RIGHT) {
-			hScore += actionCost;
-			human.turnRight();
-		}
-		else if (action == HumanActionSet.TURN_LEFT) {
-			hScore += actionCost;
-			human.turnLeft();
-		}
-		else if (action == HumanActionSet.GRAB) {
-			hScore += actionCost;
-			if (environment.grabGold() == true)
-				human.takeGold();
-		}
-		else if (action == HumanActionSet.SHOOT) {
-			hScore += actionCost;
-			if (human.shoot() == true) {
-				hScore += shootCost;
-				if (environment.arrowHit()) {
-					environment.setScream(true);
-					wumpus.terminate();
+		int reward = 0;
+		switch (action) {
+			case HumanActionSet.MOVE_FORWARD: reward += actionCost;
+				if (!human.moveForward()) { reward += bumpCost;
+					environment.setHWall(true);
 				}
-			}
+				break;
+			case HumanActionSet.TURN_RIGHT: reward += actionCost;
+				human.turnRight();
+				break;
+			case HumanActionSet.TURN_LEFT: reward += actionCost;
+				human.turnLeft();
+				break;
+			case HumanActionSet.GRAB: reward += actionCost;
+				if (environment.grabGold()) human.takeGold();
+				break;
+			case HumanActionSet.SHOOT: reward += actionCost;
+				if (human.shoot()) { reward += shootCost;
+					if (environment.arrowHit()) {
+						environment.setScream(true);
+						wumpus.terminate();
+					}
+				}
+				break;
 		}
+		return reward;
 
 	}
 
-	public void actuateWumpusAction(int action) {
+	private int actuateWAction(int action) {
 
-		if (action == WumpusActionSet.MOVE_RIGHT) {
-			wScore += actionCost;
-			if (wumpus.moveRight() == false) {
-				environment.setWWall(true);
-				wScore += bumpCost;
-			}
+		int reward = 0;
+		boolean bumped = false;
+		switch (action) {
+			case WumpusActionSet.MOVE_RIGHT: reward += actionCost;
+				if (!wumpus.moveRight()) bumped = true;
+				break;
+			case WumpusActionSet.MOVE_LEFT: reward += actionCost;
+				if (!wumpus.moveLeft()) bumped = true;
+				break;
+			case WumpusActionSet.MOVE_UP: reward += actionCost;
+				if (!wumpus.moveUp()) bumped = true;
+				break;
+			case WumpusActionSet.MOVE_DOWN: reward += actionCost;
+				if (!wumpus.moveDown()) bumped = true;
+				break;
 		}
-		else if (action == WumpusActionSet.MOVE_LEFT) {
-			wScore += actionCost;
-			if (wumpus.moveLeft() == false) {
-				environment.setWWall(true);
-				wScore += bumpCost;
-			}
+		if (bumped) { reward += bumpCost;
+			environment.setWWall(true);
 		}
-		else if (action == WumpusActionSet.MOVE_UP) {
-			wScore += actionCost;
-			if (wumpus.moveUp() == false) {
-				environment.setWWall(true);
-				wScore += bumpCost;
-			}
-		}
-		else if (action == WumpusActionSet.MOVE_DOWN) {
-			wScore += actionCost;
-			if (wumpus.moveDown() == false) {
-				environment.setWWall(true);
-				wScore += bumpCost;
-			}
-		}
+		return reward;
 
 	}
 

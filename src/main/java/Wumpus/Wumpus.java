@@ -37,31 +37,29 @@ public class Wumpus {
 	public char myIcon() {
 		return 'W';
 	}
-	public void setLocation(int[] here) {
-		x = here[0]; y = here[1];
-	}
+	public void setLocation(int[] here) { x = here[0]; y = here[1]; }
 
 	public int think() {
 		return agentFunc.process(senses);
 	}
 
 	public boolean moveRight() {
-		if (y + 1 < worldSizeKnowledge) { ++y; return true; }
+		if (y + 1 < worldSizeKnowledge) { y++; return true; }
 		return false;
 	}
 
 	public boolean moveLeft() {
-		if (y - 1 >= 0) { --y; return true; }
+		if (y - 1 >= 0) { y--; return true; }
 		return false;
 	}
 
 	public boolean moveUp() {
-		if (x - 1 >= 0) { --x; return true; }
+		if (x - 1 >= 0) { x--; return true; }
 		return false;
 	}
 
 	public boolean moveDown() {
-		if (x + 1 < worldSizeKnowledge) { ++x; return true; }
+		if (x + 1 < worldSizeKnowledge) { x++; return true; }
 		return false;
 	}
 

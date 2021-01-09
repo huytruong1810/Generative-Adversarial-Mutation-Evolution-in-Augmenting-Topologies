@@ -4,11 +4,12 @@ import Neat.Genome.Gene;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class RandomHashSet<T> {
 
     HashSet<T> set;
-    ArrayList<T> data;
+    List<T> data;
 
     public RandomHashSet() {
         set = new HashSet<>();
@@ -62,6 +63,13 @@ public class RandomHashSet<T> {
         return data.get(i);
     }
 
+    public T get(T o) {
+        for (int i = 0; i < size(); ++i) {
+            if (data.get(i).equals(o)) return data.get(i);
+        }
+        return null;
+    }
+
     public void remove(int i) {
         if (i < 0 || i >= size()) {
             return;
@@ -75,7 +83,7 @@ public class RandomHashSet<T> {
         data.remove(o);
     }
 
-    public ArrayList<T> getData() {
+    public List<T> getData() {
         return data;
     }
 

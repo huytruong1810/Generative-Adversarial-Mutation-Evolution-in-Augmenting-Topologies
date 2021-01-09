@@ -6,30 +6,28 @@ public class RandomSelector<T> {
 
     private ArrayList<T> objects = new ArrayList<T>();
     private ArrayList<Double> scores = new ArrayList<>();
-
-    private double total_score = 0;
+    private double total = 0;
 
     public void add(T o, double score) {
+        double exp = Math.exp(score);
         objects.add(o);
-        scores.add(score);
-        total_score += score;
+        scores.add(exp);
+        total += exp;
     }
 
     public T random() {
-        double v = Math.random() * total_score;
-        double c = 0;
-        for (int i = 0; i < objects.size(); ++i) {
-            c += scores.get(i);
-            if (c > v)
-                return objects.get(i);
+        double num = Math.random(), c = 0;
+        for (int i = 0, n = objects.size(); i < n; ++i) {
+            c += scores.get(i) / total;
+            if (num < c) return objects.get(i);
         }
-        return null;
+        throw new IllegalStateException("Random selector fails.");
     }
 
     public void clear() {
         objects.clear();
         scores.clear();
-        total_score = 0;
+        total = 0;
     }
 
 }

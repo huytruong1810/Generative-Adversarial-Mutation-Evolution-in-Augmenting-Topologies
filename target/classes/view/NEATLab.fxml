@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Environment.Controller.NEATController">
+
+    <VBox>
+        <HBox fx:id="PermanentStats">
+            <Label fx:id="WorldSizeT" />
+            <Label fx:id="TrialsT" />
+            <Label fx:id="TimeStepsT" />
+            <Label fx:id="PopT" />
+            <Label fx:id="EpT" />
+        </HBox>
+
+        <HBox>
+            <Button text="Reset" onAction="#reset">
+                <tooltip>
+                    <Tooltip text="Reset NEAT Population" />
+                </tooltip>
+            </Button>
+            <Button text="Expand" onAction="#expand">
+                <tooltip>
+                    <Tooltip text="Expand Window" />
+                </tooltip>
+            </Button>
+            <Button text="Exit" onAction="#exit">
+                <tooltip>
+                    <Tooltip text="Exit Application" />
+                </tooltip>
+            </Button>
+        </HBox>
+
+        <HBox>
+            <Label text="Evolution Step" />
+            <TextField fx:id="evolveStep" text="1" />
+        </HBox>
+
+        <HBox>
+            <Button text="Evolve" onAction="#evolve">
+                <tooltip>
+                    <Tooltip text="Evolve NEAT Population" />
+                </tooltip>
+            </Button>
+            <Button text="View" onAction="#view">
+                <tooltip>
+                    <Tooltip text="View NEAT Population" />
+                </tooltip>
+            </Button>
+        </HBox>
+
+        <HBox>
+            <Label text="Generation No." />
+            <Label fx:id="genNo" text="0" />
+        </HBox>
+
+        <HBox>
+            <Label text="Latest Score " />
+            <Label fx:id="latestScore" />
+        </HBox>
+
+        <HBox>
+            <Button text="Simulate" onAction="#simulate">
+                <tooltip>
+                    <Tooltip text="Simulate Selected Individual's Play-through" />
+                </tooltip>
+            </Button>
+            <Button text="Export" onAction="#export">
+                <tooltip>
+                    <Tooltip text="Export Selected Individual Into TXT-file" />
+                </tooltip>
+            </Button>
+        </HBox>
+    </VBox>
+
+    <Canvas fx:id="GenomeCanvas" />
+
+</HBox>

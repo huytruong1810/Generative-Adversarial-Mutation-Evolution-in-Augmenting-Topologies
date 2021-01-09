@@ -1,8 +1,8 @@
 package Neat.Genome;
 
-public class Gene {
+public abstract class Gene {
 
-    protected int IN; // historical marking
+    public int IN; // historical marking
     public Gene() {}
     public Gene(int n) { IN = n; }
     public int getIN() { return IN; }

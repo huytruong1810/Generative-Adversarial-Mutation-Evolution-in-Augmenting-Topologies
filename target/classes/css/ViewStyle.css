@@ -1,0 +1,69 @@
+.tool-bar {
+    -fx-spacing: 0;
+    -fx-base: rgb(58, 58, 60);
+    -fx-background-color:
+        linear-gradient(to bottom, derive(-fx-base,-30%), derive(-fx-base,-60%)),
+        linear-gradient(to bottom, rgb(99, 99, 102) 2%, rgb(58, 58, 60) 98%);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: .9em 0.416667em .9em 0.416667em;
+    -fx-effect: dropshadow(two-pass-box, rgb(28, 28, 30), 5, 0.2, 0, 0);
+}
+
+.button {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgb(209, 209, 214);
+    -fx-background-color:
+        rgb(28, 28, 30),
+        rgb(142, 142, 147),
+        linear-gradient(to bottom, rgb(99, 99, 102) 2%, rgb(58, 58, 60) 98%);
+    -fx-background-radius: 0;
+    -fx-padding: 0.4em 1.833333em 0.4em 1.833333em;
+    -fx-cursor: hand;
+}
+
+.button:pressed {
+    -fx-background-color:
+        rgb(28, 28, 30),
+        rgb(58, 58, 60),
+        linear-gradient(to top, rgb(99, 99, 102) 2%, rgb(58, 58, 60) 98%);
+    -fx-cursor: wait;
+}
+
+.list-view {
+    -fx-background-color: rgb(28, 28, 30);
+}
+
+.list-view .list-cell:even {
+    -fx-background-color: rgb(142, 142, 147);
+    -fx-text-fill: rgb(174, 174, 178);
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: rgb(99, 99, 102);
+    -fx-text-fill: rgb(174, 174, 178);
+}
+
+.list-view .list-cell:hover {
+    -fx-text-fill: rgb(209, 209, 214);
+    -fx-background-color:
+        linear-gradient(rgb(99, 99, 102) 0%, rgb(44, 44, 46) 25%, rgb(58, 58, 60) 75%, rgb(142, 142, 147) 100%),
+        linear-gradient(rgb(28, 28, 30), rgb(58, 58, 60)),
+        linear-gradient(rgb(209, 209, 214) 0%, rgb(99, 99, 102) 20%, rgb(58, 58, 60) 80%, rgb(44, 44, 46) 100%),
+        linear-gradient(rgb(199, 199, 204) 0%, rgb(99, 99, 102) 20%, rgb(58, 58, 60) 80%, rgb(44, 44, 46) 100%),
+        linear-gradient(rgb(174, 174, 178) 0%, rgb(72, 72, 74) 50%, rgb(72, 72, 74) 51%, rgb(58, 58, 60) 100%);
+    -fx-background-insets: 0,1,4,5,6;
+    -fx-background-radius: 9,8,5,4,3;
+    -fx-padding: 15 30 15 30;
+    -fx-effect: dropshadow(three-pass-box, rgb(28, 28, 30), 1, 0.0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.list-view .list-cell:filled:selected:focused {
+    -fx-text-fill: rgb(44, 44, 46);
+    -fx-font-weight: bold;
+    -fx-background-color: rgb(229, 229, 234);
+    -fx-background-insets: 0,1,4,5,6;
+    -fx-background-radius: 9,8,5,4,3;
+    -fx-padding: 15 30 15 30;
+}
