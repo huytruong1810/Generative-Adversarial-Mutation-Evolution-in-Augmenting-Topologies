@@ -23,11 +23,11 @@ The first step of this research was to implement NeuroEvolution of Augmenting To
 ##### Figure 2: The NEAT Lab that the user can evolve, reset, view, etc. the NEAT population of neural networks for the human's agent function
 
 
-The second step was to implement the Wumpus environment and Advantage Actor-Critic (A2C) algorithm, which is the basis for competition in the NEAT population. In brief, each neural networks in the population will be trained on the Wumpus environment using Advantage Actor-Critic method. Successful NEAT species and networks will be selected for reproduction and offsrings will be added to the places where weak individuals were evicted from the population (maintaining a constant max population). Networks with close genetic relations will be grouped in species and will only compete within their respective species to preserve newly developed architectual mutations. The Wumpus Simulation Driver and UI Controllers had been completed by Winter 2020 and have been merged successfully with the NEAT Driver and UI Controller.
+The second step was to implement the Wumpus environment and Advantage Actor-Critic (A2C) algorithm, which is the basis for competition in the NEAT population. In brief, in each evolution step, each neural networks in the population will be trained on the Wumpus environment using Advantage Actor-Critic method for a number of episose. Successful NEAT species and networks will be selected for reproduction and offsrings will be added to the places where weak individuals were evicted from the population (maintaining a constant amount of individuals in the population). Networks with close genetic relations will be grouped in species and will only compete within their respective species to preserve newly developed architectual mutations. The Wumpus Simulation Driver and UI Controllers had been completed by Winter 2020 and have been merged successfully with the NEAT Driver and UI Controllers.
 
 ![Simulation scene](src/main/resources/images/simUI.PNG)
 
 ##### Figure 3: A randomly generated simulation scene.
 
 
-TODO: The third step is to run, test, and supervise to observe how the human agent behave and become "successful" in this single-agent environment.
+TODO: The third step is to run, test, and supervise to observe how the human agent behave and become "successful" in this single-agent environment. The fourth step will be to try implementing the NEAT classes so that a NEAT population can be developed for the Wumpus's agent function.
