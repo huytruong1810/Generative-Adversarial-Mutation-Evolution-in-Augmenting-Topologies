@@ -27,7 +27,7 @@ The second step was to implement the Wumpus environment and Advantage Actor-Crit
 
 ![Simulation scene](src/main/resources/images/simUI.PNG)
 
-##### Figure 3: A randomly generated simulation scene.
+##### Figure 3: A randomly generated simulation scene. The human can be seen on the sand tile and Wumpus on the top-left tile of the environment grid. The circles on right panes represent the perception channels for each agent in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes for debugging.
 
 
 TODO: The third step is to run, test, and supervise to observe how the human agent behave and become "successful" in this single-agent environment. The fourth step will be to try implementing the NEAT classes so that a NEAT population can be developed for the Wumpus's agent function.
