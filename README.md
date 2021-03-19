@@ -1,8 +1,7 @@
-# WumpusWorld - Independent Research Project
-## Project's name: Explore the Development of A NEAT Multi-Agent Wumpus World
-#### Author: Truong Nguyen Huy
-#### Major: Computer Science - Software Engineering
-#### At University of Illinois at Chicago
+# Independent Research Project: Explore A NEAT-ly Wumpus Reinforcement Model
+### Author: Truong Nguyen Huy
+### Major: Computer Science - Software Engineering
+#### @ University of Illinois at Chicago
 
 
 This research is based on the Wumpus World concept in Artificial Intelligence by Michael Genesereth, Wumpuslite model designed in Java by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC, and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm. Under Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model's environment simulation by giving the Wumpus a baseline agent paradigm. Furthermore, an expected final product of this research is a software that can assist AI researchers in "culturing" their own space of strategies/solutions to a problem. In this description, I will use neural network and solution interchangeably.
