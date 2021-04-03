@@ -4,7 +4,7 @@
 #### @ University of Illinois at Chicago
 
 
-This research picked up the Wumpus World concept in Artificial Intelligence by Michael Genesereth, the Wumpuslite model designed by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC as the task we want our networks to solve (or the environment). With Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model by giving the Wumpus a baseline agent paradigm. This complicates our task to a whole new degree.
+This research picked up the Wumpus World concept in Artificial Intelligence by Michael Genesereth, the Wumpuslite model designed by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC as the environment (task) we want our agent functions (neural networks) to solve. With Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model by giving the Wumpus a baseline agent paradigm. This complicates our task to a whole new degree.
 
 Furthermore, an expected final product of this research is a software tool that can assist AI researchers in "culturing" their own space of strategies/solutions to a problem. 
 Throughout the presentation, I will be using neural networks and solutions interchangeably.
