@@ -4,11 +4,14 @@
 #### @ University of Illinois at Chicago
 
 
-This research is based on the Wumpus World concept in Artificial Intelligence by Michael Genesereth, Wumpuslite model designed in Java by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC, and NeuroEvolution of Augmenting Topologies (NEAT - by Ken Stanley) algorithm. Under Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model's environment simulation by giving the Wumpus a baseline agent paradigm. Furthermore, an expected final product of this research is a software that can assist AI researchers in "culturing" their own space of strategies/solutions to a problem. In this description, I will use neural network and solution interchangeably.
+This research picked up the Wumpus World concept in Artificial Intelligence by Michael Genesereth, the Wumpuslite model designed by Professor James P. Biagioni in CS 511 – Artificial Intelligence II at UIC as the task we want our networks to solve (or the environment). With Professor Piotr Gmytrasiewicz’s guidance, I have added the factor of Multiagent to the model by giving the Wumpus a baseline agent paradigm. This complicates our task to a whole new degree.
 
-Wumpus World Background and research expectation:
+Furthermore, an expected final product of this research is a software tool that can assist AI researchers in "culturing" their own space of strategies/solutions to a problem. 
+Throughout the presentation, I will be using neural networks and solutions interchangeably.
 
-The utility for the human agent is to maximize its performance measure by reaching the gold while maintaining the highest possible score, which is calculated based on a reward/penalty system. The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while maintaining its highest possible score, which is also calculated based on its respective reward/penalty system. The agents competing in this environment are expected to perform logical "reasoning" and strategic "planning" in order to nagivite its task without termination. The agents in this environment have the capabilities of learning, and knowledge-based agent models.
+As some Wumpus World Background, the utility for the human agent is to maximize its performance measure by reaching the gold while avoiding death by Wumpus or by pits. The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while avoiding death by arrows from the human agent. The human has an array of perception capabilities, such as smelling the wumpus's stench, feeling the pit's breeze, etc. while the Wumpus can smell the human's sense at locations that the human has come across. The human is allowed to perform a number of actions such as turning left/right, moving forward, shooting arrows while the Wumpus can only move in the 4 axis-directions.
+
+The research goal is to have the agents competing in this environment perform logical "reasoning" and strategic "planning" in order to navigate its task without termination. That is, the agents should have the capabilities of Model-based reflex (able to keep track of the changes in the partially observable environment), Utility-based (able to consider the best way to achieve a goal), and Learning (able to learn from past experiences) agent types.
 
 ###### Notice: These files do not contain all of the coded work (for example, NEAT drivers, A2C drivers have been removed) due to the research's security.
 
