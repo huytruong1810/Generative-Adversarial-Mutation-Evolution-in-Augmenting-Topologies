@@ -10,18 +10,18 @@ Furthermore, an expected final product of this research is a software tool that 
 
 As some Wumpus World Background:
 1. The utility for the human agent is to maximize its performance measure by reaching the gold while avoiding death by Wumpus or by pits. 
-2. [My own design] The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while avoiding death by arrows from the human agent. 
+2. **[My own design]** The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent while avoiding death by arrows from the human agent. 
 3. The human has an array of perception capabilities, such as smelling the wumpus's stench, feeling the pit's breeze, etc. 
-4. [My own design] The Wumpus can smell the human's sense at locations that the human has come across. 
+4. **[My own design]** The Wumpus can smell the human's sense at locations that the human has come across. 
 5. The human is allowed to perform a number of actions such as turning left/right, moving forward, shooting arrows.
-6. [My own design] The Wumpus can move in the 4 axis-directions.
+6. **[My own design]** The Wumpus can move in the 4 axis-directions.
 
 The research goal is to have these neural-designed agents exhibit an underlying capabilities of logical "reasoning" and strategic "planning" in order to navigate their tasks most efficiently. That is, the agents should have the capabilities of the following agent types:
 1. Model-based reflex (able to keep track of the changes in the partially observable environment), 
 2. Utility-based (able to consider the best way to achieve its self-established goal), 
 3. And Learning (able to learn from past episodic experiences).
 
-###### Notice: These files do not contain all of the coded work [NEAT package have been locked] due to the research's security.
+###### Notice: These files do not contain all of the coded work **[NEAT package have been locked]** due to the research's security.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
