@@ -29,7 +29,7 @@ The research goal is to have these neural-designed agents exhibit an underlying 
 
 ##### Figure 1: This is the login screen of the program. User can specify the Wumpus world size (dimension of the 2D square grid world); number of time steps (each time step is a time unit in a training/testing episode); max population (the number of solution architectures at any generation); and number of training/testing episodes (the number of chances each solution gets to improve itself and get evaluated). 
 
-I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm proposed by Kenneth O. Stanley (to learn more, you can learn more [here](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) as a control for non-deterministically producing agent functions. My version of NEAT implementation involves:
+I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm proposed by Kenneth O. Stanley (to learn more, click [here](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)) as a control for non-deterministically producing agent functions. My version of NEAT implementation involves:
 
 1. Initialize a population of primitively defined solution architectures/parameters
 2. Speciate the population of solution architectures using a genomic distance function, 
