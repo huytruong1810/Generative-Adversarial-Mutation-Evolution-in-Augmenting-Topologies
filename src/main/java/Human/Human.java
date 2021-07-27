@@ -1,7 +1,7 @@
 package Human;
 
 import Environment.Environment;
-import Neat.Genome.Genome;
+import NEAT.Individual;
 
 public class Human {
 
@@ -10,11 +10,11 @@ public class Human {
 	private int numArrows;
 	private boolean isDead, gotGold;
 
-	private int worldSizeKnowledge;
-	private HumanSensory senses;
-	private HumanFunction agentFunc;
+	private final int worldSizeKnowledge;
+	private final HumanSensory senses;
+	private final HumanFunction agentFunc;
 
-	public Human(Environment E, Genome g) {
+	public Human(Environment E, Individual i, boolean beingTested) {
 
 		numArrows = 1;
 		isDead = false;
@@ -22,7 +22,7 @@ public class Human {
 
 		worldSizeKnowledge = E.getSize();
 		senses = new HumanSensory(E);
-		agentFunc = new HumanFunction(g);
+		agentFunc = new HumanFunction(i, beingTested);
 
 		x = E.getHumanLoc()[0];
 		y = E.getHumanLoc()[1];
@@ -42,8 +42,10 @@ public class Human {
 	public void setLocation(int[] here) { x = here[0]; y = here[1]; }
 
 	public int think() { return agentFunc.process(senses); }
-	public void learn(int reward, int takenAction) { agentFunc.adjust(senses, reward, takenAction); }
+	public void giveEnvironmentReturn(int reward) { agentFunc.logEnvironmentReturn(reward, senses); }
+	public void learn() { agentFunc.adjust(); }
 
+	public HumanSensory getSenses() { return senses; }
 	public double[] getActorThought() { return agentFunc.getProbs(); }
 	public double getCriticThought() { return agentFunc.getStateValue(); }
 	public double getTDTarget() { return agentFunc.getTDTarget(); }

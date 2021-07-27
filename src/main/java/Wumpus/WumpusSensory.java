@@ -4,17 +4,18 @@ import Environment.Environment;
 
 public class WumpusSensory {
 	
-	private Environment E;
+	private final Environment E;
 		
-	public WumpusSensory(Environment e) {
-		E = e;
-	}
+	public WumpusSensory(Environment e) { E = e; }
 
-	public boolean IFeelBump() {
-		return E.thereIsWWall();
+	public double[] produceState(int takenAction, int numPercept) {
+		double[] stateVec = new double[numPercept];
+		stateVec[0] = (E.thereIsWWall()) ? 1 : -1;
+		stateVec[1] = (E.wumpusSmellScent()) ? 1 : -1;
+		stateVec[2] = E.wumpusSmellDirectionIs();
+		stateVec[3] = E.wumpusSmellIntensityIs();
+		stateVec[4] = takenAction * 0.1 + 1; // normalize action value
+		return stateVec;
 	}
-	public boolean ISmellPerson() { return E.thereIsScent(); }
-	public char ISmellDirIs() { return E.getSceneDir(); }
-	public char ISmellIntIs() { return E.getSceneInt(); }
 	
 }

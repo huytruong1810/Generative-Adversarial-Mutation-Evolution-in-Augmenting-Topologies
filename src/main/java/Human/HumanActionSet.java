@@ -10,5 +10,19 @@ public class HumanActionSet {
 	public static final int SHOOT = 5;
 	public static final int NO_OP = 6;
 	public static final int SELF_TERMINATE = 7;
+
+	public static String getName(int actionCode) {
+		switch (actionCode) {
+			case WAKE_UP: return "WAKE_UP";
+			case MOVE_FORWARD: return "MOVE_FORWARD";
+			case TURN_RIGHT: return "TURN_RIGHT";
+			case TURN_LEFT: return "TURN_LEFT";
+			case GRAB: return "GRAB";
+			case SHOOT: return "SHOOT";
+			case NO_OP: return "NO_OP";
+			case SELF_TERMINATE: return "SELF_TERMINATE";
+			default: return "@";
+		}
+	}
 	
 }

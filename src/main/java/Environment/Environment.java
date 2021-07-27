@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Environment {
 
-	private int size;
-	private char[][][] cave, hPerceptMap, wPerceptMap;
+	private final int size;
+	private final char[][][] map, hPerceptMap, wPerceptMap;
 
 	private int hX, hY, wX, wY;
 	private char hD;
@@ -17,7 +17,7 @@ public class Environment {
 	private boolean wWall;
 	private boolean scream;
 
-	private ArrayList<int[]> pits, golds;
+	private final ArrayList<int[]> pits, golds;
 
 	private final int P = 0, W = 1, G = 2, H = 3;
 	private final int B = 0, S = 1, Gl = 2;
@@ -26,7 +26,7 @@ public class Environment {
 	public Environment(int s, char[][][] worldBlueprint) {
 
 		size = s;
-		cave = new char[s][s][4];
+		map = new char[s][s][4];
 		hPerceptMap = new char[s][s][3];
 		wPerceptMap = new char[s][s][2];
 
@@ -37,20 +37,15 @@ public class Environment {
 		pits = new ArrayList<>();
 		golds = new ArrayList<>();
 
-		char[] space;
 		for (int i = 0; i < s; ++i) { // clear out the maps
 			for (int j = 0; j < s; ++j) {
-				space = worldBlueprint[i][j];
-				for (int m = 0; m < 4; ++m) {
-					cave[i][j][m] = space[m];
-				}
-				for (int n = 0; n < 3; ++n) {
-					hPerceptMap[i][j][n] = ' ';
-				}
+				System.arraycopy(worldBlueprint[i][j], 0, map[i][j], 0, 4);
+				for (int n = 0; n < 3; ++n) hPerceptMap[i][j][n] = ' ';
 				wPerceptMap[i][j][SLT] = '0';
 				wPerceptMap[i][j][SD] = ' ';
 			}
 		}
+		char[] space;
 		for (int i = 0; i < s; ++i) { // fill the maps
 			for (int j = 0; j < s; ++j) {
 				space = worldBlueprint[i][j];
@@ -92,22 +87,22 @@ public class Environment {
 		System.out.println("\n***Debugging maps***");
 		System.out.println("Cave layout:");
 		for (int i = 0; i < size; ++i) {
-			for (int j = 0; j < size; ++j) System.out.print("| "+cave[i][j][0]+" "+cave[i][j][1]+" |");
-			System.out.println("");
-			for (int j = 0; j < size; ++j) System.out.print("| "+cave[i][j][2]+" "+cave[i][j][3]+" |");
+			for (int j = 0; j < size; ++j) System.out.print("| "+ map[i][j][0]+" "+ map[i][j][1]+" |");
+			System.out.println();
+			for (int j = 0; j < size; ++j) System.out.print("| "+ map[i][j][2]+" "+ map[i][j][3]+" |");
 			System.out.println("\n-----------------------------------------------------------------------------------");
 		}
 		System.out.println("\nHuman percept map layout:");
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) System.out.print("| "+hPerceptMap[i][j][0]+" "+hPerceptMap[i][j][1]+" |");
-			System.out.println("");
+			System.out.println();
 			for (int j = 0; j < size; ++j) System.out.print("| "+hPerceptMap[i][j][2]+"   |");
 			System.out.println("\n-----------------------------------------------------------------------------------");
 		}
 		System.out.println("\nWumpus percept map layout:");
 		for (int i = 0; i < size; ++i) {
 			for (int j = 0; j < size; ++j) System.out.print("| "+wPerceptMap[i][j][0]+" "+wPerceptMap[i][j][1]+" |");
-			System.out.println("");
+			System.out.println();
 			for (int j = 0; j < size; ++j) System.out.print("|     |");
 			System.out.println("\n-----------------------------------------------------------------------------------");
 		}
@@ -127,27 +122,27 @@ public class Environment {
 	public boolean thereIsWWall() { return wWall; }
 	
 	public void setScream(boolean s) { scream = s; }
-	public boolean thereIsScream() { return scream; }
+	public boolean humanHearScream() { return scream; }
 
-	public boolean thereIsBreeze() { return hPerceptMap[hX][hY][B] == 'B'; }
-	public boolean thereIsStench() { return hPerceptMap[hX][hY][S] == 'S'; }
-	public boolean thereIsGlitter() { return hPerceptMap[hX][hY][Gl] == 'G'; }
-	public boolean thereIsScent() { return wPerceptMap[wX][wY][SD] != ' '; }
-	public char getSceneInt() { return wPerceptMap[wX][wY][SLT]; }
-	public char getSceneDir() { return wPerceptMap[wX][wY][SD]; }
+	public boolean humanFeelBreeze() { return hPerceptMap[hX][hY][B] == 'B'; }
+	public boolean humanSmellStench() { return hPerceptMap[hX][hY][S] == 'S'; }
+	public boolean humanSeeGlitter() { return hPerceptMap[hX][hY][Gl] == 'G'; }
+	public boolean wumpusSmellScent() { return wPerceptMap[wX][wY][SD] != ' '; }
+	public char wumpusSmellIntensityIs() { return wPerceptMap[wX][wY][SLT]; }
+	public char wumpusSmellDirectionIs() { return wPerceptMap[wX][wY][SD]; }
 
-	public boolean wumpusWithHuman() { return cave[hX][hY][W] == 'W'; }
-	public boolean humanInPit() { return cave[hX][hY][P] == 'P'; }
+	public boolean wumpusIsWithHuman() { return map[hX][hY][W] == 'W'; }
+	public boolean humanIsInPit() { return map[hX][hY][P] == 'P'; }
 
 	public void updateHumanInfo(Human h) {
 
-		cave[hX][hY][H] = ' '; // remove human from prev location
+		map[hX][hY][H] = ' '; // remove human from prev location
 		wPerceptMap[hX][hY][SD] = hD; // leave a scent there
 
 		hX = h.myLocation()[0];
 		hY = h.myLocation()[1];
 		hD = h.myDirection();
-		cave[hX][hY][H] = h.myDirection();
+		map[hX][hY][H] = h.myDirection();
 		wPerceptMap[hX][hY][SLT] = '5';
 		wPerceptMap[hX][hY][SD] = 'X';
 
@@ -155,7 +150,7 @@ public class Environment {
 
 	public void updateWumpusInfo(Wumpus w) {
 
-		cave[wX][wY][1] = ' '; // remove wumpus from prev location
+		map[wX][wY][1] = ' '; // remove wumpus from prev location
 		hPerceptMap[wX][wY][S] = ' '; // remove its scents
 		if (wY-1 >= 0) hPerceptMap[wX][wY-1][S] = ' ';
 		if (wX+1 < size) hPerceptMap[wX+1][wY][S] = ' ';
@@ -164,7 +159,7 @@ public class Environment {
 
 		wX = w.myLocation()[0];
 		wY = w.myLocation()[1];
-		cave[wX][wY][W] = w.myIcon();
+		map[wX][wY][W] = w.myIcon();
 		hPerceptMap[wX][wY][S] = 'S';
 		if (wY-1 >= 0) hPerceptMap[wX][wY-1][S] = 'S';
 		if (wX+1 < size) hPerceptMap[wX+1][wY][S] = 'S';
@@ -182,10 +177,10 @@ public class Environment {
 		}	
 	}
 
-	public boolean grabGold() {
+	public boolean goldIsThereToGrab() {
 		if (hPerceptMap[hX][hY][Gl] == 'G') {
 			hPerceptMap[hX][hY][Gl] = ' ';
-			cave[hX][hY][G] = ' ';
+			map[hX][hY][G] = ' ';
 			return true;
 		}
 		return false;
