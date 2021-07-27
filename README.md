@@ -16,7 +16,7 @@ As some Wumpus World Background:
 5. The human is allowed to perform a number of actions such as turning left/right, moving forward, shooting arrows.
 6. [My own design] The Wumpus can move in the 4 axis-directions.
 
-The research goal is to have the agents exhibit an underlying capabilities of logical "reasoning" and strategic "planning" in order to navigate their tasks most efficiently. That is, the agents should have the capabilities of 
+The research goal is to have these neural-designed agents exhibit an underlying capabilities of logical "reasoning" and strategic "planning" in order to navigate their tasks most efficiently. That is, the agents should have the capabilities of 
 1. Model-based reflex (able to keep track of the changes in the partially observable environment), 
 2. Utility-based (able to consider the best way to achieve its self-established goal), 
 3. And Learning (able to learn from past episodic experiences) agent types.
