@@ -15,6 +15,7 @@ The research goal is to have the agents competing in this environment perform lo
 
 ###### Notice: These files do not contain all of the coded work (for example, NEAT drivers, A2C drivers have been removed) due to the research's security.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ![Login screen](src/main/resources/images/loginUI.PNG)
 
@@ -22,8 +23,6 @@ The research goal is to have the agents competing in this environment perform lo
 
 
 I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm proposed by Kenneth O. Stanley (to learn more, please read research paper at http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) as a control for non-deterministically producing agent functions/solution. My version of NEAT implementation involves initializing a population of primitively defined solution architectures/parameters and evolving them until a "well-performing" solution is found. At a high level, my implementation for evolution includes the following steps: speciating the population of solution architectures using a genomic distance function, having individuals in a species perform in the Wumpus environment while training them using the actor-critic method so high-performing individuals can be yielded while low-performing ones are evicted, terminating species that exceed the minimum threshold of individual counts, and finally, having successful species reproduce using a genetic algorithm to fill in the spot of evicted individuals. This implementation ensures that the inflow of newborn individual solutions and outflow of evicted solutions are maintained at consistent rates sustaining a stable population count. Moreover, speciation ensures the retention of a diverse population of solution architectures, thus, maintaining and parallelly developing a promising hypothesis space.
-
-The NEAT Driver and NEAT UI Controllers had been completely implemented by Fall 2020.
 
 At the design level of the solution/network architectures, a Long Short-Term Memory (LSTM) is attached to an Actor-Critic architecture. The LSTM's role is to tune a useful sequential memory processor that maps the space of environment observation sequence to elevated feature space for the Actor-Critic architecture. Therefore, I named this area the "Memory Retention Unit" (MRU) of the network architecture. The "Actor-Critic Unit" (ACU) would map this feature space to an action-distribution and state-value space respectively. In a training session, after each full forward pass from percept history to action decision/state-value opinion, the environment returns rewards which are inputs to policy gradient calculation for actor training and loss minimization for critic training. The back gradients of these two ACU subunits are, then, passed into the Memory Retention Unit to "service" the LSTM gates.
 
@@ -33,11 +32,11 @@ At the design level of the solution/network architectures, a Long Short-Term Mem
 
 Design decision: In the MRU, I decide that while each gate has its own set of parameters, their architectures should stay the same. Similarly, in the ACU, while Actor and Critic have their own respective set of parameters, Actor shares the same architecture with the Critic with some minor differences in output arrangements (as Actor is performing Logistic Classification and Critic is performing Regression).
 
-The Wumpus Simulation Driver, Baseline Solution Architecture setup, and Simulation UI Controllers had been completely implemented by Winter 2020 and have been merged successfully with the NEAT Driver and Main UI Controllers.
-
 ![Environment Building scene](src/main/resources/images/buildEnvUI.PNG)
 
 ##### Figure 3: User can build a custom environment as illustrated in this UI during simulation (visualized testing mode) of an individual genome.
+
+During competition between individuals within species in the population, each individual has to go through a user-specified number of training episodes, where neural parameters are trained, and then get evaluated in a user-specified number of testing episodes where exploration is banned and neural parameters are not changed. This happens in the background for each evolution step. However, user can view the testing of an individual by clicking on the Simulation button (the top-down second button on the left column). This will take the user to a build environment scene where a environment blueprint can be built via a drap-drop method.
 
 ![Simulation scene](src/main/resources/images/simUI.PNG)
 
