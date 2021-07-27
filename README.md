@@ -35,9 +35,13 @@ Design decision: In the MRU, I decide that while each gate has its own set of pa
 
 The Wumpus Simulation Driver, Baseline Solution Architecture setup, and Simulation UI Controllers had been completely implemented by Winter 2020 and have been merged successfully with the NEAT Driver and Main UI Controllers.
 
+![Environment Building scene](src/main/resources/images/buildEnvUI.PNG)
+
+##### Figure 3: User can build a custom environment as illustrated in this UI during simulation (visualized testing mode) of an individual genome.
+
 ![Simulation scene](src/main/resources/images/simUI.PNG)
 
-##### Figure 3: A randomly generated simulation scene. The human can be seen on the sand tile and Wumpus on the top-left tile of the environment grid. The circles on right panes represent the perception channels for each agent in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes for debugging. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still too simple. Further evolution steps are required. 
+##### Figure 4: A custom-built simulation scene. The circles on right panes represent the perception channels for the agents in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still simple. 
 
 I want to examine if this baseline architectural design (LSTM - ActorCritic) of the agent function can lead to the development of functions that exhibit logical "reasoning" and strategic "planning". At the current state of the research, the model has been completely implemented and is to be optimized and supervised to check on how the human agent displays "rationality". So far, an observed shortcoming that inhibits effective evolution trajectories is the slow convergence-to-optima of the Memory Retention Unit. Coupled with the computational expensiveness of LSTMs, this area requires further optimization or even being replaced by a self-attention architecture.
 
