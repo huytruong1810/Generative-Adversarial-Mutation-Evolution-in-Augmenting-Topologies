@@ -25,13 +25,11 @@ The research goal is to have the agents competing in this environment perform lo
 I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm proposed by Kenneth O. Stanley (to learn more, please read research paper at http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) as a control for non-deterministically producing agent functions. My version of NEAT implementation involves:
 
 1. Initialize a population of primitively defined solution architectures/parameters
-2. Evolve them until a "well-performing" architecture is found. At a high level, my implementation for evolution includes the following steps: 
-3. 
-  1. Speciate the population of solution architectures using a genomic distance function, 
-  2. Have individuals in a species train in the Wumpus environment using the advantage actor-critic method
-  3. Yield high-performing individuals while evict low-performing ones
-  4. Terminate species that exceed the minimum threshold of individual counts, 
-  5. Finally, have successful species reproduce using a genetic algorithm to fill in the spot of evicted individuals. 
+2. Speciate the population of solution architectures using a genomic distance function, 
+3. Have individuals in a species train in the Wumpus environment using the advantage actor-critic method
+4. Yield high-performing individuals while evict low-performing ones
+5. Terminate species that exceed the minimum threshold of individual counts, 
+6. Finally, have successful species reproduce using a genetic algorithm to fill in the spot of evicted individuals. 
 
 This implementation ensures that the inflow of newborn individual solutions and outflow of evicted solutions are maintained at consistent rates sustaining a stable population count. Moreover, speciation ensures the retention of a diverse population of solution architectures, thus, maintaining and developing a promising hypothesis space in parallel.
 
