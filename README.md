@@ -26,6 +26,7 @@ I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm propo
 
 1. Initialize a population of primitively defined solution architectures/parameters
 2. Evolve them until a "well-performing" architecture is found. At a high level, my implementation for evolution includes the following steps: 
+3. 
   1. Speciate the population of solution architectures using a genomic distance function, 
   2. Have individuals in a species train in the Wumpus environment using the advantage actor-critic method
   3. Yield high-performing individuals while evict low-performing ones
