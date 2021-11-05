@@ -1,4 +1,4 @@
-# Independent Research Project: Explore A NEAT-ly Wumpus Reinforcement Model
+# Research Project: Explore A NEAT-ly Wumpus Reinforcement Model
 ### Author: Truong Nguyen Huy
 ### Major: Computer Science - Software Engineering
 #### @ University of Illinois at Chicago
