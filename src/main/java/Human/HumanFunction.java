@@ -1,11 +1,9 @@
 package Human;
 
-import NEAT.Genome.ACU.ACUConGene;
-import NEAT.Genome.ACU.ACUGenome;
-import NEAT.Genome.MRU.MRUConGene;
-import NEAT.Genome.MRU.MRUGenome;
-import NEAT.DataStructures.MemStack;
 import NEAT.DataStructures.MemUnit;
+import NEAT.Genome.DecisionHead.DHg;
+import NEAT.Genome.MemoryHead.MHg;
+import NEAT.DataStructures.MemStream;
 import NEAT.Individual;
 
 import java.util.HashMap;
@@ -14,193 +12,149 @@ import static NEAT.NEAT.*;
 
 public class HumanFunction {
 
-	private final int numPercept, numAction;
-	private final boolean inTesting;
-	private final int[] actionTable;
-	private final MRUGenome MRU;
-	private final ACUGenome ACU;
+	public static final int[] actionTable = new int[] {
+			HumanActionSet.MOVE_FORWARD,
+			HumanActionSet.TURN_RIGHT,
+			HumanActionSet.TURN_LEFT,
+			HumanActionSet.GRAB,
+			HumanActionSet.SHOOT,
+			HumanActionSet.NO_OP
+	};
 
-	// these components are only relevant during a complete simulation
+	private final boolean inTesting;
+	private final int codeLength;
+	private final MHg MH;
+	private final DHg DH;
+	private final HumanSensory senses;
+
+	// these variable's values are only relevant during a complete train/test episode
 	private int takenAction;
-	private double[] probs;
-	private double V_s, TDTarget, explorationRate;
-	private final MemStack memory;
+	private double[] probs, nextStatePred;
+	private double V_s;
+	private final MemStream memory;
 
 	// for graphical components, must only be collected when most updated
 	public double[] getProbs() { return probs; } // most updated right after process()
 	public double getStateValue() { return V_s; } // most updated right after process()
-	public double getTDTarget() { return TDTarget; } // most updated right after logEnvironmentReturn()
+	public double[] getNextStatePred() { return nextStatePred; } // most updated right after process()
 
-	public HumanFunction(Individual i, boolean testing) {
+	public HumanFunction(Individual i, HumanSensory sensorySystem, boolean testing) {
 
 		inTesting = testing;
 		takenAction = HumanActionSet.WAKE_UP; // first thing is waking up
-		explorationRate = IER;
-		numPercept = 6;
-		numAction = 5;
-		actionTable = new int[numAction]; // the available actions
-		actionTable[0] = HumanActionSet.MOVE_FORWARD;
-		actionTable[1] = HumanActionSet.TURN_RIGHT;
-		actionTable[2] = HumanActionSet.TURN_LEFT;
-		actionTable[3] = HumanActionSet.GRAB;
-		actionTable[4] = HumanActionSet.SHOOT;
 
-		MRU = i.getMRU();
-		ACU = i.getACU();
+		// extract genome
+		// NOTE that a new human/brain is init every train/test episode but genome is altered permanently
+		MH = i.getMRU();
+		codeLength = MH.getOutputNum();
+		DH = i.getACU();
 
-		memory = new MemStack();
-		memory.push(new MemUnit(-1, null,
-				new double[MRU.getOutputNum()], // initialize hidden state to zero vector
-				new double[MRU.getOutputNum()], // initialize cell state to zero vector
-				null));
+		// here signifies the begin of an episode
+		MH.episodePrep();
+		DH.episodePrep();
+
+		// keep reference to the sensory system
+		senses = sensorySystem;
+
+		// initialize internal memory stack with size of a unit
+		memory = new MemStream(codeLength * 2);
 
 	}
 
 	/**
 	 * Processes the senses and decides what action to take
 	 * IMPORTANT: Each process() needs to be followed by a logEnvironmentReturn()
-	 * @param senses - the sensory system
+	 * @param dead - is the agent dead
 	 * @return action decision
 	 */
-	public int process(HumanSensory senses) {
+	public int process(boolean dead) {
 
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		System.out.println("memory:\n" + memory);
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		 */
+		// get actor's action distribution at time t with previously selected action and previous V(s)
+		MemUnit actorUnit = MH.feed(memory.recent(), senses.produceActorState(obsII.length, takenAction, V_s), 'a');
+	    probs = DH.feed(actorUnit.t(), actorUnit.h('a'), 'a');
 
-		// process state and update memory
-		memory.push(MRU.feed(memory.peek(), senses.produceState(takenAction, numPercept)));
-
-		double[] MRUOutput = memory.peek().h();
-		// get actor's action opinion on output of MRU
-	    probs = ACU.feed(MRUOutput, true);
-		// get critic's state-value opinion
-		V_s = ACU.feed(MRUOutput, false)[0];
-
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		System.out.print("PROBS: ");
-		for (int i = 0; i < numAction; ++i) System.out.print(probs[i] + ", ");
-		System.out.println("V_s: " + V_s);
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		 */
-
-		if (explorationRate > Math.random() && !inTesting) { // don't explore during testing
-			explorationRate *= ER_RR; // slowly going towards exploitation
-			takenAction = actionTable[(int) (Math.random() * numAction)];
-		} else {
-			// stochastic action selection
-			takenAction = -1; // impossible value
-			double num = Math.random(), p = 0;
-			for (int i = 0; i < numAction; ++i) { // only first half is result of softmax
-				p += probs[i];
-				if (num < p) {
-					takenAction = actionTable[i];
-					memory.peek().set_a(i);
-					break;
-				}
-			}
-			if (takenAction == -1) throw new IllegalStateException("Stochastic action selection fails.");
+		int selectedActionIndex = IMPOSSIBLE_VAL;
+		if (dead) { // the only case where taken action is not based on selected action-index
+			selectedActionIndex = 5; // index 5 is no-op so stalling will get a bad reputation
 		}
-
-		/* // protocol uses maximum probability
-			double max = probs[0];
-			int argmax = 0;
-			for (int i = 1; i < numAction; ++i) {
-				if (probs[i] > max) {
-					max = probs[i];
-					argmax = i;
-				}
+		else { // stochastic action selection which includes exploration
+			double p = Math.random(), cumulative = 0.0;
+			for (int i = 0, n = probs.length; i < n; ++i) {
+				cumulative += probs[i];
+				if (p < cumulative) { selectedActionIndex = i; break; }
 			}
-			takenAction = actionTable[argmax];
 		}
-		 */
+		takenAction = actionTable[selectedActionIndex]; // taken action is updated
 
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		System.out.println("**Choose action " + takenAction);
-         /** TESTING----------------------------------------------------------------------------------------------------=
-         */
+		// get critic's V(s) at time t with current selected action and previous V(s)
+		MemUnit criticUnit = MH.feed(memory.recent(), senses.produceCriticState(obsII.length, takenAction, V_s), 'c');
+		V_s = DH.feed(criticUnit.t(), criticUnit.h('c'), 'c')[0];
+
+		// get seer's next state prediction at time t with current selected action and current V(s)
+		MemUnit seerUnit = MH.feed(memory.recent(), senses.produceSeerState(obsII.length, takenAction, V_s), 's');
+		nextStatePred = DH.feed(seerUnit.t(), seerUnit.h('s'), 's');
+
+		// complete the actor unit with critic's and seer's so we can update memory
+		actorUnit.complete(criticUnit, seerUnit);
+		memory.push(actorUnit);
+
+		memory.recent().setOutputs(selectedActionIndex, V_s, probs, nextStatePred);
 
 		return takenAction;
 	    
 	}
 
 	/**
-	 * Logs the environment return after an action is taken
+	 * NOTE: must only be called after equivalent process() because process push the most recent
+	 * timeunit onto the memory stream
+	 * Logs the environment returned reward after an action is taken
 	 * @param reward - the returned reward
-	 * @param senses - the sensory system
 	 */
-	public void logEnvironmentReturn(int reward, HumanSensory senses) {
-
-		// bootstrap oracle state-value using TD(0) target
-		double V_snext = ACU.feed(MRU.feed(memory.peek(), senses.produceState(takenAction, numPercept)).h(), false)[0];
-		TDTarget = reward + GAMMA * V_snext;
-
-		// update latest memory unit
-		memory.peek().set_r(reward);
-		memory.peek().set_cG(TDTarget - V_s);
-		memory.peek().set_aG((TDTarget - V_s) / probs[memory.peek().a()]);
-
-		/** TESTING----------------------------------------------------------------------------------------------------=
-		 System.out.println("**Logged " + memory.peek());
-		 /** TESTING----------------------------------------------------------------------------------------------------=
-		 */
-
+	public void logReward(int reward) {
+		// consider reward that promotes intrinsic curiosity
+		int obsLen = obsII.length;
+		double[] newState = senses.produceSeerState(obsLen, 0, 0); // only care about observations
+		double surprise = 0;
+		for (int i = 0; i < obsLen; ++i) surprise += Math.pow(newState[i] - nextStatePred[i], 2);
+		reward += surprise / obsLen;
+		// save the reward for learning
+		memory.recent().set_r(reward);
 	}
 
 	/**
-	 * Tunes the ACU and MRU at the end of a life
+	 * NOTE: must only be called after each episode ends
+	 * Tunes the DH and MH at the end of an episode
 	 */
 	public void adjust() {
 
 		if (inTesting) throw new IllegalStateException("Adjust should not happen during testing.");
 
-		// for collecting updates to weights in ACU
-		HashMap<Integer, Double> actorConGrads = new HashMap<>();
-		HashMap<Integer, Double> criticConGrads = new HashMap<>();
+		double[] dL_dCnext = new double[codeLength * 3]; // store for all actor-critic-seer
+		double[] dL_dhnext = new double[codeLength * 3];
 
-		// for collecting updates to weights in MRU
-		HashMap<Integer, Double> fConGrads = new HashMap<>();
-		HashMap<Integer, Double> iConGrads = new HashMap<>();
-		HashMap<Integer, Double> cConGrads = new HashMap<>();
-		HashMap<Integer, Double> oConGrads = new HashMap<>();
+		memory.shave(); // shave off [t = -1] unit and fix max time
+		int t = memory.maxTime(); // the latest time step
 
-		double[] dL_dCnext = new double[MRU.getOutputNum()];
-		double[] dL_dhnext = new double[MRU.getOutputNum()];
+		while (t >= 0) { // done when see a negative time step
 
-		while (memory.peek().t() >= 0) { // done when see a negative time step
-
-			MemUnit memUnit = memory.pop();
-			// for collecting gradient returns of ACU
+			// for collecting gradient returns of ACU and training MRU
 			HashMap<Integer, Double> actorGradRet = new HashMap<>();
 			HashMap<Integer, Double> criticGradRet = new HashMap<>();
-			// train critic using MSE gradient and actor using critic's opinion and Advantage Function
-			ACU.trainActorCritic(memUnit, actorConGrads, criticConGrads, actorGradRet, criticGradRet);
-			// train MRU gates using actor's and critic's back gradients
-			MRU.trainGates(memUnit, memory.peek(), dL_dCnext, dL_dhnext,
-					actorGradRet, criticGradRet, fConGrads, iConGrads, cConGrads, oConGrads);
+			HashMap<Integer, Double> seerGradRet = new HashMap<>();
+			// train decision head's parameters
+			DH.train(t, LAMBDA, GAMMA, memory, actorGradRet, criticGradRet, seerGradRet);
+			// train memory head's gates using back gradients of decision head
+			// dL_dCnext and dL_dhnext are updated overtime
+			MH.train(t, memory, dL_dCnext, dL_dhnext, actorGradRet, criticGradRet, seerGradRet);
+
+			--t; // go to previous time step
 
 		}
 
-		// update all weights of actor and critic
-		for (ACUConGene con : ACU.getCons().getData()) {
-			int IN = con.getIN();
-			if (con.isEnabled()) {
-				con.setWeight(con.getWeight(true) + (actorConGrads.containsKey(IN) ? actorConGrads.get(IN) : 0), true);
-				con.setWeight(con.getWeight(false) + (criticConGrads.containsKey(IN) ? criticConGrads.get(IN) : 0), false);
-			}
-		}
-
-		// update all weights of MRU gates
-		for (MRUConGene con : MRU.getCons().getData()) {
-			int IN = con.getIN();
-			if (con.isEnabled()) {
-				con.setWeight(con.getWeight('o') + (oConGrads.containsKey(IN) ? oConGrads.get(IN) : 0), 'o');
-				con.setWeight(con.getWeight('c') + (cConGrads.containsKey(IN) ? cConGrads.get(IN) : 0), 'c');
-				con.setWeight(con.getWeight('i') + (iConGrads.containsKey(IN) ? iConGrads.get(IN) : 0), 'i');
-				con.setWeight(con.getWeight('f') + (fConGrads.containsKey(IN) ? fConGrads.get(IN) : 0), 'f');
-			}
-		}
+		// here signifies the end of the episode
+		memory.clear();
+		DH.episodeDone();
+		MH.episodeDone();
 
 	}
 	

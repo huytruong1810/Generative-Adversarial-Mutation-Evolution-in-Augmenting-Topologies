@@ -1,5 +1,8 @@
 package Environment.Controllers;
 
+import Environment.Simulators.EnsembleRoom;
+import Environment.Simulators.TestRoom;
+import NEAT.DataStructures.Grapher;
 import NEAT.Individual;
 import NEAT.Species;
 import NEAT.NEAT;
@@ -16,10 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,9 +41,12 @@ public class NEATController extends Controller {
     private Individual selected;
     private double winX, winY;
 
+    // plotting components
+    private Grapher grapher;
+
     @FXML private HBox RootBox;
     @FXML private TextField evolveStep;
-    @FXML private Button exitBtn, resetBtn, resizeBtn, uploadBtn, evolveBtn, viewBtn, simulateBtn, baggingBtn, treeBtn, grapherBtn, importBtn, exportBtn;
+    @FXML private Button exitBtn, resetBtn, resizeBtn, uploadBtn, buildEnvBtn, evolveBtn, viewBtn, simulateBtn, baggingBtn, treeBtn, grapherBtn, importBtn, exportBtn;
     @FXML private Label WorldSizeT, TimeStepsT, PopT, TrEpsT, TeEpsT;
     @FXML private Label genNo, latestScore;
     @FXML private Pane SpotlightWrapper, Spotlight;
@@ -56,7 +59,7 @@ public class NEATController extends Controller {
         primaryStage.close();
     }
 
-    @FXML public void reset() {
+    @FXML public void reset() throws CloneNotSupportedException {
 
         selected = null;
         Spotlight.getChildren().clear();
@@ -75,32 +78,61 @@ public class NEATController extends Controller {
 
     }
 
-    @FXML public void evolve() {
+    @FXML public void buildEnv() throws IOException {
+
+        Stage buildEnvWindow = new Stage();
+
+        buildEnvWindow.initOwner(primaryStage);
+        buildEnvWindow.initStyle(StageStyle.TRANSPARENT);
+        buildEnvWindow.setTitle("Build Custom Environment");
+        buildEnvWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/buildEnv.png")).toExternalForm()));
+        // simulation window initialization
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/buildEnv.fxml"));
+        Parent sRoot = loader.load();
+        BuildEnvController bec = loader.getController();
+        bec.makeBuildEnvScene(buildEnvWindow, worldDim, bluePrint);
+        Scene buildEnvScene = new Scene(sRoot);
+        buildEnvScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/BuildEnv.css")).toExternalForm());
+        buildEnvWindow.setResizable(true);
+        buildEnvWindow.setScene(buildEnvScene);
+
+        buildEnvWindow.showAndWait();
+
+        // handle requested world size and blue print from previous scene
+        worldDim = bec.getWorldSize();
+        bluePrint = bec.getCustomBlueprint();
+
+    }
+
+    @FXML public void evolve() throws CloneNotSupportedException {
 
         int numSteps = Integer.parseInt(evolveStep.getText());
         int curStep = Integer.parseInt(genNo.getText());
 
-        //Utils.drawIndividual(mainStage, Spotlight, NEAT.listPopulation().get(0));                                                         // DEBUG
-
-        // file access is slow so save them in local file temporarily
-        List<List<Individual>> stepList = new ArrayList<>();
-        List<List<Species>> speciesProgress = new ArrayList<>();
+//        // file access is slow so save them in local file temporarily
+//        List<List<Individual>> stepList = new ArrayList<>();
+//        List<List<Species>> speciesProgress = new ArrayList<>();
         for (int i = 0; i < numSteps; ++i) {
             NEAT.evolve();
-            stepList.add(NEAT.listPopulation());
-            speciesProgress.add(NEAT.listEcosystem());
+            grapher.addPoint(
+                    NEAT.listEcosystem().size(),
+                    Utils.championOfChampions(NEAT.listEcosystem()).getScore(),
+                    NEAT.getAvgScore()
+            );
+//            stepList.add(NEAT.listPopulation());
+//            speciesProgress.add(NEAT.listEcosystem());
         }
-        try {
-            Utils.fileParse(tempFile, accessID, curStep, stepList, speciesProgress);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Utils.fileParse(tempFile, accessID, curStep, stepList, speciesProgress);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         genNo.setText(Integer.toString(curStep + numSteps));
 
         // showcase the best individual after the evolution
-        selected = Utils.getFittest(NEAT.listPopulation());
-        Utils.drawIndividual(primaryStage, Spotlight, selected);                                                         // DEBUG
+        selected = Utils.championOfChampions(NEAT.listEcosystem());
+        Utils.drawIndividual(primaryStage, Spotlight, selected);
 
         // display high score
         latestScore.setText(Double.toString(selected.getScore()));
@@ -109,9 +141,8 @@ public class NEATController extends Controller {
 
     @FXML public void view() {
 
-        // make pop-up window
         Stage viewWindow = new Stage();
-        viewWindow.initModality(Modality.APPLICATION_MODAL);
+
         viewWindow.initOwner(primaryStage);
         viewWindow.setTitle("NEAT Population");
         viewWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/view.png")).toExternalForm()));
@@ -150,56 +181,106 @@ public class NEATController extends Controller {
 
     @FXML public void simulate() throws IOException, CloneNotSupportedException {
 
-        // make pop-up window
+        if (selected == null) {
+            Stage noIndErrorWindow = new Stage();
+            noIndErrorWindow.initOwner(primaryStage);
+            noIndErrorWindow.setScene(Utils.makeWarningScene("Simulation Requires\nOne Selected Individual", noIndErrorWindow));
+            noIndErrorWindow.show();
+            return;
+        }
+
+        // clone the individual as testing phase should not update the individual's parameters,
+        // this also supports threading of this phase
+        Individual theClone = selected.clone();
+        theClone.express(); // must express genome to get phenotype for testing
+
+        // load up build environment scene first
         Stage buildEnvWindow = new Stage();
 
-        if (selected != null) {
-            buildEnvWindow.setTitle("Build Custom Environment");
-            buildEnvWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/simulation.png")).toExternalForm()));
-            // simulation window initialization
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/buildEnv.fxml"));
-            Parent sRoot = loader.load();
-            BuildEnvController bec = loader.getController();
-            // clone the individual as testing phase should not update the individual's parameters,
-            // this also supports threading of this phase
-            Individual theClone = selected.clone();
-            theClone.express(); // must express genome to get phenotype for testing
-            bec.makeBuildEnvScene(buildEnvWindow, testSimulator, theClone);
-            Scene buildEnvScene = new Scene(sRoot);
-            buildEnvScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/BuildEnv.css")).toExternalForm());
-            buildEnvWindow.setResizable(true);
-            buildEnvWindow.setScene(buildEnvScene);
-        } else buildEnvWindow.setScene(Utils.makeWarningScene("Simulation Requires\nOne Selected Individual", buildEnvWindow));
+        buildEnvWindow.initOwner(primaryStage);
+        buildEnvWindow.initStyle(StageStyle.TRANSPARENT);
+        buildEnvWindow.setTitle("Build Custom Environment");
+        buildEnvWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/simulation.png")).toExternalForm()));
+        // simulation window initialization
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/buildEnv.fxml"));
+        Parent sRoot = loader.load();
+        BuildEnvController bec = loader.getController();
+        bec.makeBuildEnvScene(buildEnvWindow, worldDim, bluePrint);
+        Scene buildEnvScene = new Scene(sRoot);
+        buildEnvScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/BuildEnv.css")).toExternalForm());
+        buildEnvWindow.setResizable(true);
+        buildEnvWindow.setScene(buildEnvScene);
 
-        buildEnvWindow.show();
+        buildEnvWindow.showAndWait(); // wait for it to be closed before proceeding
+
+        // load up individual simulation
+        Stage simulateWindow = new Stage();
+
+        simulateWindow.initOwner(primaryStage);
+        simulateWindow.setTitle("Wumpus World Simulation");
+        simulateWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/simulation.png")).toExternalForm()));
+        // simulation window initialization
+        loader = new FXMLLoader(getClass().getResource("/view/simulation.fxml"));
+        sRoot = loader.load();
+        SimulationController sc = loader.getController();
+        sc.makeSimulationScene(simulateWindow, new TestRoom(bec.getWorldSize(), timeHorizon), bec.getCustomBlueprint(), theClone);
+        Scene simulationScene = new Scene(sRoot);
+        simulationScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/SimulationStyle.css")).toExternalForm());
+        simulateWindow.setResizable(true);
+        simulateWindow.setScene(simulationScene);
+
+        simulateWindow.show();
 
     }
 
     @FXML public void bagging() throws IOException, CloneNotSupportedException {
 
-        // make pop-up window
-        Stage baggingWindow = new Stage();
         if (NEAT.listEcosystem().size() <= 0) {
-            baggingWindow.setScene(Utils.makeWarningScene("Ecosystem has not started to develop.", baggingWindow));
-            baggingWindow.show();
+            Stage noEcoErrorWindow = new Stage();
+            noEcoErrorWindow.initOwner(primaryStage);
+            noEcoErrorWindow.setScene(Utils.makeWarningScene("Ecosystem has not\nbeen started.", noEcoErrorWindow));
+            noEcoErrorWindow.show();
             return;
         }
 
-        baggingWindow.setTitle("Wumpus World Bagging Simulation");
-        baggingWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/bagging.png")).toExternalForm()));
-        // simulation window initialization
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/bagging.fxml"));
-        Parent sRoot = loader.load();
-        BaggingController bc = loader.getController();
-
+        // collect and clone all the champions
         ArrayList<Individual> champions = new ArrayList<>();
         for (Species s : NEAT.listEcosystem()) {
-            Individual clonedChampion = Utils.getFittest(s.getPopulation().getData()).clone();
-            clonedChampion.express(); // must express genome to get phenotype for testing
+            Individual clonedChampion = s.getChampion().clone();
+            clonedChampion.express(); // must express genome to get phenotype
             champions.add(clonedChampion);
         }
 
-        bc.makeBaggingScene(baggingWindow, ensembleSimulator, bluePrint, champions);
+        // load up build environment scene first
+        Stage buildEnvWindow = new Stage();
+
+        buildEnvWindow.initOwner(primaryStage);
+        buildEnvWindow.initStyle(StageStyle.TRANSPARENT);
+        buildEnvWindow.setTitle("Build Custom Environment");
+        buildEnvWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/bagging.png")).toExternalForm()));
+        // simulation window initialization
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/buildEnv.fxml"));
+        Parent sRoot = loader.load();
+        BuildEnvController bec = loader.getController();
+        bec.makeBuildEnvScene(buildEnvWindow, worldDim, bluePrint);
+        Scene buildEnvScene = new Scene(sRoot);
+        buildEnvScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/BuildEnv.css")).toExternalForm());
+        buildEnvWindow.setResizable(true);
+        buildEnvWindow.setScene(buildEnvScene);
+
+        buildEnvWindow.showAndWait(); // wait for it to be closed before proceeding
+
+        // load up bagging simulation
+        Stage baggingWindow = new Stage();
+
+        baggingWindow.initOwner(primaryStage);
+        baggingWindow.setTitle("Wumpus World Bagging Simulation");
+        baggingWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/bagging.png")).toExternalForm()));
+        // simulation window initialization
+        loader = new FXMLLoader(getClass().getResource("/view/bagging.fxml"));
+        sRoot = loader.load();
+        BaggingController bc = loader.getController();
+        bc.makeBaggingScene(baggingWindow, new EnsembleRoom(bec.getWorldSize(), timeHorizon), bec.getCustomBlueprint(), champions);
         Scene baggingScene = new Scene(sRoot);
         baggingScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/BaggingStyle.css")).toExternalForm());
         baggingWindow.setResizable(true);
@@ -211,9 +292,8 @@ public class NEATController extends Controller {
 
     @FXML public void tree() {
 
-        // make pop-up window
         Stage treeWindow = new Stage();
-        treeWindow.initModality(Modality.APPLICATION_MODAL);
+
         treeWindow.initOwner(primaryStage);
         treeWindow.setTitle("Species Tree");
         treeWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/tree.png")).toExternalForm()));
@@ -255,9 +335,8 @@ public class NEATController extends Controller {
 
         // make pop-up window
         Stage grapherWindow = new Stage();
-        grapherWindow.initModality(Modality.APPLICATION_MODAL);
-        grapherWindow.initOwner(primaryStage);
 
+        grapherWindow.initOwner(primaryStage);
         grapherWindow.setTitle("Grapher");
         grapherWindow.getIcons().add(new Image(Objects.requireNonNull(getClass().getResource("/images/grapher.png")).toExternalForm()));
 
@@ -265,7 +344,7 @@ public class NEATController extends Controller {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/grapher.fxml"));
         Parent sRoot = loader.load();
         GrapherController sc = loader.getController();
-        sc.makeGrapherScene(grapherWindow, accessID);
+        sc.makeGrapherScene(grapherWindow, grapher);
         Scene grapherScene = new Scene(sRoot);
         grapherScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/CommonPopUpStyle.css")).toExternalForm());
         grapherWindow.setResizable(true);
@@ -276,6 +355,7 @@ public class NEATController extends Controller {
     }
 
     @FXML public void importGene() {
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("NEAT Gene Files (*.neatg)", "*.neatg"));
@@ -287,11 +367,11 @@ public class NEATController extends Controller {
                 e.printStackTrace();
             }
         }
+
     }
 
     @FXML public void export() {
 
-        // make pop-up window
         Stage exportWindow = new Stage();
 
         if (selected != null) {
@@ -333,6 +413,7 @@ public class NEATController extends Controller {
         resetBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/reset.png")).toExternalForm()));
         resizeBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/resize.png")).toExternalForm()));
         uploadBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/upload.png")).toExternalForm()));
+        buildEnvBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/buildEnv.png")).toExternalForm()));
         evolveBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/evolve.png")).toExternalForm()));
         viewBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/view.png")).toExternalForm()));
         simulateBtn.setGraphic(new ImageView(Objects.requireNonNull(getClass().getResource("/images/simulation.png")).toExternalForm()));
@@ -344,8 +425,7 @@ public class NEATController extends Controller {
 
         if (!Utils.dbOnline) {
             uploadBtn.setDisable(true);
-            grapherBtn.setDisable(true);
-            return;
+            return; // do not make temp file
         }
 
         tempFile = new File("temp.txt");
@@ -360,6 +440,7 @@ public class NEATController extends Controller {
 
     public void makeNEATScene(Stage s, int worldSize, int timeSteps, int maxPop, int trainEps, int testEps) {
 
+        grapher = new Grapher();
         accessID = Utils.insertAccess(worldSize, timeSteps, maxPop, trainEps, testEps);
 
         evolveStep.setEditable(false);
@@ -416,6 +497,7 @@ public class NEATController extends Controller {
                 else if (keyCode == KeyCode.G) grapher();
                 else if (keyCode == KeyCode.M) importGene();
                 else if (keyCode == KeyCode.E) export();
+                else if (keyCode == KeyCode.TAB) buildEnv();
                 else if (keyCode == KeyCode.ENTER) evolve();
                 else if (keyCode == KeyCode.ESCAPE) exit();
                 else if (keyCode == KeyCode.SHIFT) resize();
@@ -426,23 +508,20 @@ public class NEATController extends Controller {
             ke.consume();
         });
 
-        //int[][] pits = new int[][] {{0, 1}, {2, 0}};
-        //int[][] golds = new int[][] {{1, 1}};
-        //bluePrint = Utils.makeBlueprint(worldSize, true, true, 2, 1, null, null);
-
         // a null blueprint value means it is to be randomly set up
-        // 6 input - 5 first nodes are observations, 6th is the taken action
-        // 8 hidden - 8 hidden nodes connecting MRU and ACU
-        // 6 output - 5 first nodes are relevant to actor, 6th is for critic
-        NEAT.setUp(worldSize, timeSteps, null, 6, 8, 6, maxPop, trainEps, testEps);
+        // 7 input - 5 first nodes are observations, 2 last nodes are inflection nodes
+        // 8 hidden - nodes connecting MRU and ACU
+        // 12 output - 6 first nodes are relevant to actor, 7th is for critic, 5 last nodes are relevant to seer
+        NEAT.setUp(worldSize, timeSteps, null,
+                new int[] {0, 1, 2, 3, 4}, new int[] {5, 6}, 8,
+                new int[] {0, 1, 2, 3, 4, 5}, new int[] {6}, new int[] {7, 8, 9, 10, 11}, maxPop, trainEps, testEps);
 
         // add the starting population to file
         try {
             Utils.fileParse(tempFile, accessID, -1,
                     new ArrayList<>(List.of(NEAT.listPopulation())),
                     new ArrayList<>(List.of(NEAT.listEcosystem())));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

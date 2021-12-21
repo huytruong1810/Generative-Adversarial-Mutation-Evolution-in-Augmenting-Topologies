@@ -32,20 +32,20 @@
     -fx-cursor: hand;
 }
 
-#SpotlightWrapper Line {
+#SpotlightWrapper CubicCurve {
     -fx-smooth: true;
     -fx-stroke-width: 2px;
     -fx-stroke-line-cap: round;
 }
 
-#SpotlightWrapper Line:hover {
-    -fx-stroke-width: 5px;
+#SpotlightWrapper CubicCurve:hover {
+    -fx-stroke-width: 4px;
 }
 
 #ControlPanel {
     -fx-spacing: 18;
     -fx-padding: 8;
-    -fx-pref-width: 500px;
+    -fx-pref-width: 1000px;
     -fx-background-color: rgb(44, 44, 46);
 }
 
@@ -55,6 +55,10 @@
     -fx-alignment: "CENTER";
     -fx-background-radius: 9,8,5,4,3;
     -fx-background-color: transparent;
+}
+
+#HyperParams Label .text {
+    -fx-fill: linear-gradient(to bottom right, rgb(255, 149, 0) 40%, rgb(255, 159, 10) 80%);
 }
 
 #ControlPanel .button {

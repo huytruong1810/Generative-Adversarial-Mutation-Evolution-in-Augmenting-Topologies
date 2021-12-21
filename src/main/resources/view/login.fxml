@@ -22,18 +22,18 @@
         </HBox>
         <HBox>
             <Label text="Max pplt" />
-            <TextField fx:id="PopT" text="5000" />
+            <TextField fx:id="PopT" text="200" />
         </HBox>
     </VBox>
 
     <VBox>
         <HBox>
             <Label text="Train Eps" />
-            <TextField fx:id="TrEpsT" text="2" />
+            <TextField fx:id="TrEpsT" text="3" />
         </HBox>
         <HBox>
             <Label text="Test Eps" />
-            <TextField fx:id="TeEpsT" text="1" />
+            <TextField fx:id="TeEpsT" text="2" />
         </HBox>
         <HBox>
             <Label text="DB-Log Enable" />

@@ -11,22 +11,20 @@ public class Human {
 	private boolean isDead, gotGold;
 
 	private final int worldSizeKnowledge;
-	private final HumanSensory senses;
 	private final HumanFunction agentFunc;
 
-	public Human(Environment E, Individual i, boolean beingTested) {
+	public Human(Environment environment, Individual brainGenome, boolean beingTested) {
 
-		numArrows = 1;
+		numArrows = 10;
 		isDead = false;
 		gotGold = false;
 
-		worldSizeKnowledge = E.getSize();
-		senses = new HumanSensory(E);
-		agentFunc = new HumanFunction(i, beingTested);
+		worldSizeKnowledge = environment.getSize();
+		agentFunc = new HumanFunction(brainGenome, new HumanSensory(environment), beingTested);
 
-		x = E.getHumanLoc()[0];
-		y = E.getHumanLoc()[1];
-		direction = E.getHumanDir();
+		x = environment.getHumanLoc()[0];
+		y = environment.getHumanLoc()[1];
+		direction = environment.getHumanDir();
 		
 	}
 
@@ -38,20 +36,17 @@ public class Human {
 
 	public int[] myLocation() { return new int[]{x, y}; }
 	public char myDirection() { return direction; }
-	public void setDirection(char d) { direction = d; }
-	public void setLocation(int[] here) { x = here[0]; y = here[1]; }
 
-	public int think() { return agentFunc.process(senses); }
-	public void giveEnvironmentReturn(int reward) { agentFunc.logEnvironmentReturn(reward, senses); }
+	public int think() { return agentFunc.process(isDead); }
+	public void giveReward(int reward) { agentFunc.logReward(reward); }
 	public void learn() { agentFunc.adjust(); }
 
-	public HumanSensory getSenses() { return senses; }
 	public double[] getActorThought() { return agentFunc.getProbs(); }
 	public double getCriticThought() { return agentFunc.getStateValue(); }
-	public double getTDTarget() { return agentFunc.getTDTarget(); }
+	public double[] getSeerPred() { return agentFunc.getNextStatePred(); }
 
 	public boolean shoot() {
-		if (numArrows > 0) { numArrows--; return true; }
+		if (numArrows > 0) { --numArrows; return true; }
 		return false;
 	}
 

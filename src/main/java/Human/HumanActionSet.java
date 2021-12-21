@@ -1,15 +1,15 @@
 package Human;
 
-public class HumanActionSet {
-	
-	public static final int WAKE_UP = 0;
-	public static final int MOVE_FORWARD = 1;
-	public static final int TURN_RIGHT = 2;
-	public static final int TURN_LEFT = 3;
-	public static final int GRAB = 4;
-	public static final int SHOOT = 5;
-	public static final int NO_OP = 6;
-	public static final int SELF_TERMINATE = 7;
+public class HumanActionSet { // do not use enum because complicated factoring of int values
+
+	public static final int WAKE_UP = -3;
+	public static final int MOVE_FORWARD = -2;
+	public static final int TURN_RIGHT = -1;
+	public static final int TURN_LEFT = 0;
+	public static final int GRAB = 1;
+	public static final int SHOOT = 2;
+	public static final int NO_OP = 3;
+	public static final int SELF_TERMINATE = 4;
 
 	public static String getName(int actionCode) {
 		switch (actionCode) {

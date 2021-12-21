@@ -11,20 +11,32 @@
       fx:controller="Environment.Controllers.NEATController">
 
     <VBox fx:id="ControlPanel">
-        <VBox>
-            <HBox>
+        <VBox alignment="CENTER">
+            <HBox id="HyperParams">
                 <Label text="Size: " />
                 <Label fx:id="WorldSizeT" />
                 <Label text="Time: " />
                 <Label fx:id="TimeStepsT" />
             </HBox>
-            <HBox>
+            <HBox id="HyperParams">
                 <Label text="Pplt: " />
                 <Label fx:id="PopT" />
                 <Label text="No. TrEps: " />
                 <Label fx:id="TrEpsT" />
                 <Label text="No. TeEps: " />
                 <Label fx:id="TeEpsT" />
+            </HBox>
+            <HBox>
+                <Button fx:id="buildEnvBtn" onAction="#buildEnv">
+                    <tooltip>
+                        <Tooltip text="Build Environment (TAB)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="uploadBtn" onAction="#upload">
+                    <tooltip>
+                        <Tooltip text="Upload Population Information To Database (U)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
+                    </tooltip>
+                </Button>
             </HBox>
         </VBox>
 
@@ -43,11 +55,6 @@
             <Button fx:id="resizeBtn" onAction="#resize">
                 <tooltip>
                     <Tooltip text="Resize Application Window (SHIFT)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
-                </tooltip>
-            </Button>
-            <Button fx:id="uploadBtn" onAction="#upload">
-                <tooltip>
-                    <Tooltip text="Upload Population Information To Database (U)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
                 </tooltip>
             </Button>
         </HBox>

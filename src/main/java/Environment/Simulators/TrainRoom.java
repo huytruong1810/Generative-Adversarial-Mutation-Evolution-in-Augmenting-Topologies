@@ -2,12 +2,11 @@ package Environment.Simulators;
 
 import Environment.Environment;
 import Human.Human;
-import Human.HumanActionSet;
 import NEAT.Individual;
 import Wumpus.Wumpus;
 import Wumpus.WumpusActionSet;
 
-import static Environment.RewardSystem.*;
+import static Environment.RewardConst.*;
 
 public class TrainRoom extends Simulator {
 
@@ -34,7 +33,7 @@ public class TrainRoom extends Simulator {
 		}
 
 		// sample human's action
-		hTakenAction = human.dead() ? HumanActionSet.SELF_TERMINATE : human.think();
+		hTakenAction = human.think(); // if time, push last memory unit on for final reward log
 		// sample wumpus's action
 		wTakenAction = wumpus.dead() ? WumpusActionSet.SELF_TERMINATE : wumpus.think();
 
@@ -45,29 +44,33 @@ public class TrainRoom extends Simulator {
 		int hReward = actuateHAction(hTakenAction); // sample reward for human
 		int wReward = actuateWAction(wTakenAction); // sample reward for wumpus
 
-		hReward += (done == -2) ? timeCost : 0; // apply time cost if necessary
-		wReward += (done == -2) ? timeCost : 0;
+		hReward += (done == -2) ? deathCost : 0; // apply time cost if necessary
+		wReward += (done == -2) ? deathCost : 0;
 
-		environment.regulateHumanScent();
-		environment.updateHumanInfo(human);
-		environment.updateWumpusInfo(wumpus);
+		if (done != -2) { // update environment if not time
 
-		if (environment.humanIsInPit()) {
-			hReward += deathCost;
-			done = -1; // human died
-		}
-		if (environment.wumpusIsWithHuman() && !wumpus.dead()) {
-			hReward += deathCost;
-			wReward += killReward;
-			done = 2; // wumpus won
-		}
-		if (human.haveGold()) {
-			hReward += goldReward;
-			wReward += lostCost;
-			done = 1; // human won
+			environment.regulateHumanScent();
+			environment.updateHumanInfo(human);
+			environment.updateWumpusInfo(wumpus);
+
+			if (environment.humanIsInPit()) {
+				hReward += deathCost;
+				done = -1; // human died
+			}
+			if (environment.wumpusIsWithHuman() && !wumpus.dead()) {
+				hReward += deathCost;
+				wReward += killReward;
+				done = 2; // wumpus won
+			}
+			if (human.haveGold()) {
+				hReward += goldReward;
+				wReward += lostCost;
+				done = 1; // human won
+			}
+
 		}
 
-		human.giveEnvironmentReturn(hReward);
+		human.giveReward(hReward);
 		//wumpus.giveReward(wReward);
 
 		// accumulate rewards as scores
@@ -75,8 +78,8 @@ public class TrainRoom extends Simulator {
 		wScore += wReward;
 		// go to next step if all is good
 		if (done == 0) stepCounter += 1;
-		else { // let agents learn at the end of their lives
-			human.learn(); // human learn from environment's feedback
+		else { // let agents learn at the end of the episode
+			human.learn(); // learns from the completed trajectory
 			//wumpus.learn();
 		}
 		return done;

@@ -7,36 +7,37 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Separator?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="Environment.Controllers.BuildEnvController">
 
     <HBox fx:id="MenuBox" alignment="CENTER">
-        <Label text="World Size " />
-        <TextField fx:id="WorldSizeT" text="5" />
+        <Button text="World Size" disable="true" />
+        <TextField fx:id="WorldSizeT" />
         <Button text="Reset" onAction="#reset" />
+        <Button text="Resize" onAction="#resize" />
         <Button text="Random" onAction="#random" />
         <Button text="Done" onAction="#done" />
-        <Button text="Resize" onAction="#resize" />
-        <Button text="Exit" onAction="#exit" />
     </HBox>
 
-    <HBox fx:id="MainBox">
-        <VBox alignment="CENTER">
-            <Label text=" Drag elements onto blueprint " />
+    <HBox fx:id="MainBox" alignment="CENTER">
+        <VBox fx:id="ElemBox" alignment="CENTER">
+            <Label text="Drag elements onto blueprint " />
             <Label text="Right-click elements on" />
-            <Label text="    blueprint to delete" />
-            <Label text="----------------------------" />
+            <Label text="blueprint to delete" />
+            <Separator />
             <Label text="Pit" />
             <ImageView fx:id="PitImg" />
-            <Label text="----------------------------" />
+            <Separator />
             <Label text="Gold" />
             <ImageView fx:id="GoldImg" />
-            <Label text="----------------------------" />
+            <Separator />
             <Label text="Human" />
             <ImageView fx:id="HumanImg" />
-            <Label text="----------------------------" />
+            <Separator />
             <Label text="Wumpus" />
             <ImageView fx:id="WumpusImg" />
+            <Separator />
         </VBox>
         <Pane fx:id="DesignPane" />
     </HBox>

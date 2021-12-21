@@ -1,6 +1,5 @@
 package Environment.Simulators;
 
-import Environment.Controllers.Utils;
 import Environment.Environment;
 import Human.Ensemble;
 import Human.Human;
@@ -11,7 +10,7 @@ import Wumpus.WumpusActionSet;
 
 import java.util.ArrayList;
 
-import static Environment.RewardSystem.*;
+import static Environment.RewardConst.*;
 
 public class EnsembleRoom extends Simulator {
 
@@ -54,63 +53,69 @@ public class EnsembleRoom extends Simulator {
 
         environment = new Environment(worldSize, bp);
         humanEnsemble = new Ensemble(humanMembers);
-        // let human be the fittest of all members
-        human = new Human(environment, Utils.getFittest(humanMembers), true);
+        // the representative human be any member
+        human = new Human(environment, humanMembers.get(0), true);
         wumpus = new Wumpus(environment);
 
     }
 
     @Override
     public int step() {
+//
+//        int done = 0; // initially assume everything is good
+//
+//        if (stepCounter == timeSteps) {
+//            human.terminate();
+//            wumpus.terminate();
+//            done = -2; // out of time
+//        }
+//
+//        // sample human's action
+//        hTakenAction = human.dead() ? HumanActionSet.SELF_TERMINATE : humanEnsemble.vote(human.getSenses());        // NEED TO BE FIX
+//        // sample wumpus's action
+//        wTakenAction = wumpus.dead() ? WumpusActionSet.SELF_TERMINATE : wumpus.think();
+//
+//        if (environment.humanHearScream()) environment.setScream(false);
+//        if (environment.thereIsHWall()) environment.setHWall(false);
+//        if (environment.thereIsWWall()) environment.setWWall(false);
+//
+//        int hReward = actuateHAction(hTakenAction); // sample reward for human
+//        int wReward = actuateWAction(wTakenAction); // sample reward for wumpus
+//
+//        hReward += (done == -2) ? deathCost : 0; // apply time cost if necessary
+//        wReward += (done == -2) ? deathCost : 0;
+//
+//        if (done != -2) { // update environment if not time
+//
+//            environment.regulateHumanScent();
+//            environment.updateHumanInfo(human);
+//            environment.updateWumpusInfo(wumpus);
+//
+//            if (environment.humanIsInPit()) {
+//                hReward += deathCost;
+//                done = -1; // human died
+//            }
+//            if (environment.wumpusIsWithHuman() && !wumpus.dead()) {
+//                hReward += deathCost;
+//                wReward += killReward;
+//                done = 2; // wumpus won
+//            }
+//            if (human.haveGold()) {
+//                hReward += goldReward;
+//                wReward += lostCost;
+//                done = 1; // human won
+//            }
+//
+//        }
+//
+//        // no need to log the rewards, accumulate rewards as scores
+//        hScore += hReward;
+//        wScore += wReward;
+//        // go to next step if all is good
+//        if (done == 0) stepCounter += 1;
+//        return done;
 
-        int done = 0; // initially assume everything is good
-
-        if (stepCounter == timeSteps) {
-            human.terminate();
-            wumpus.terminate();
-            done = -2; // out of time
-        }
-
-        // sample human's action
-        hTakenAction = human.dead() ? HumanActionSet.SELF_TERMINATE : humanEnsemble.vote(human.getSenses());
-        // sample wumpus's action
-        wTakenAction = wumpus.dead() ? WumpusActionSet.SELF_TERMINATE : wumpus.think();
-
-        if (environment.humanHearScream()) environment.setScream(false);
-        if (environment.thereIsHWall()) environment.setHWall(false);
-        if (environment.thereIsWWall()) environment.setWWall(false);
-
-        int hReward = actuateHAction(hTakenAction); // sample reward for human
-        int wReward = actuateWAction(wTakenAction); // sample reward for wumpus
-
-        hReward += (done == -2) ? timeCost : 0; // apply time cost if necessary
-        wReward += (done == -2) ? timeCost : 0;
-
-        environment.regulateHumanScent();
-        environment.updateHumanInfo(human);
-        environment.updateWumpusInfo(wumpus);
-
-        if (environment.humanIsInPit()) {
-            hReward += deathCost;
-            done = -1; // human died
-        }
-        if (environment.wumpusIsWithHuman() && !wumpus.dead()) {
-            hReward += deathCost;
-            wReward += killReward;
-            done = 2; // wumpus won
-        }
-        if (human.haveGold()) {
-            hReward += goldReward;
-            wReward += lostCost;
-            done = 1; // human won
-        }
-
-        // accumulate rewards as scores
-        hScore += hReward;
-        wScore += wReward;
-        // go to next step if all is good
-        if (done == 0) stepCounter += 1;
-        return done;
+        return 0;
 
     }
 

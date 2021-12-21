@@ -1,12 +1,9 @@
 package Environment.Controllers;
 
 import NEAT.DataStructures.AncestorTree;
-import NEAT.Genome.ACU.ACUConGene;
-import NEAT.Genome.ACU.ACUGenome;
-import NEAT.Genome.ACU.ACUNodeGene;
-import NEAT.Genome.MRU.MRUConGene;
-import NEAT.Genome.MRU.MRUGenome;
-import NEAT.Genome.MRU.MRUNodeGene;
+import NEAT.DataStructures.GraphicPack;
+import NEAT.Genome.DecisionHead.DHng;
+import NEAT.Genome.MemoryHead.MHng;
 import NEAT.Individual;
 import NEAT.Species;
 import javafx.scene.Scene;
@@ -21,13 +18,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
@@ -37,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static NEAT.Lambdas.Graphics.*;
 import static NEAT.NEAT.*;
 
 public class Utils {
@@ -215,7 +213,7 @@ public class Utils {
      * @throws IOException - file writing exception
      */
     public static void fileParse(File file, int accessID, int stepNo, List<List<Individual>> stepList, List<List<Species>> speciesProgression) throws IOException {
-
+/*                                                                                                         BECAUSE ACTOR-CRITIC UPDATE TO LSTM
         if (!dbOnline) return;
 
         if (file == null) throw new IllegalStateException("File is not initialized.");
@@ -267,7 +265,7 @@ public class Utils {
         FileWriter myWriter = new FileWriter(file.getName(), true);
         myWriter.write(text.toString());
         myWriter.close();
-
+*/
     }
 
     /** ================================================================================================================
@@ -352,16 +350,14 @@ public class Utils {
         StringBuilder geneticInfo = new StringBuilder("\nIndividual\n" + i);
 
         geneticInfo.append("\nMRU\n");
-        for (MRUNodeGene n : i.getMRU().getNodes().getData()) {
-            StringBuilder allConsDetails = new StringBuilder();
-            for (MRUConGene c : n.getInCons()) allConsDetails.append("\n").append(c.inspect());
+        for (MHng n : i.getMRU().getNodes().getData()) {
+            StringBuilder allConsDetails = n.parseInCons();
             geneticInfo.append(n.inspect()).append(allConsDetails).append("\n");
         }
 
         geneticInfo.append("\nACU\n");
-        for (ACUNodeGene n : i.getACU().getNodes().getData()) {
-            StringBuilder allConsDetails = new StringBuilder();
-            for (ACUConGene c : n.getInCons()) allConsDetails.append("\n").append(c.inspect());
+        for (DHng n : i.getACU().getNodes().getData()) {
+            StringBuilder allConsDetails = n.parseInCons();
             geneticInfo.append(n.inspect()).append(allConsDetails).append("\n");
         }
 
@@ -435,20 +431,8 @@ public class Utils {
         help.setOnAction(e -> inspectPopUp(stage, "Selected Individual", i.toString()));
         spotlight.getChildren().add(help);
 
-        // layout explanation
-        Button layout = new Button("v");
-        layout.setLayoutX(hiddenNodeX+r/2);
-        layout.setTooltip(customTooltip(
-                "Left is Memory Retention Unit (MRU)\n" +
-                        "Right is Actor Critic Unit (ACU)\n" +
-                        "Blue: enable MRU connection\n" +
-                        "Green: enable ACU connection\n" +
-                        "Red: disable connection"
-        ));
-        spotlight.getChildren().add(layout);
-
-        // draw MRU
-        for (MRUNodeGene n : i.getMRU().getNodes().getData()) {
+        // draw memory head
+        for (MHng n : i.getMRU().getNodes().getData()) {
             double x = n.getX(), y = n.getY();
             String nodeDetails = n.inspect();
             Button node = new Button();
@@ -456,55 +440,84 @@ public class Utils {
             node.setLayoutY(y);
             node.setTooltip(customTooltip(nodeDetails));
             StringBuilder allConsDetails = new StringBuilder();
-            ArrayList<Line> inLines = new ArrayList<>();
+            ArrayList<CubicCurve> curves = new ArrayList<>();
             double intensity = 0;
-            for (MRUConGene c : n.getInCons()) {
-                intensity += c.isEnabled() ? 1 : 0;
-                String conDetails = c.inspect();
-                Line line = new Line(c.getFG().getX()+r, c.getFG().getY()+r/2, x, y+r/2);
-                line.setStroke((c.isEnabled()) ? Color.rgb(48, 176, 199) : Color.rgb(255, 59, 48));
-                if (c.isEnabled()) line.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(255, 255, 255, 0.7), 30, 0.2, 0.0, 0.0));
-                Tooltip.install(line, customTooltip(conDetails));
+            GraphicPack[] graphicPacks = n.getGraphicInCons();
+            for (GraphicPack pack : graphicPacks) {
+                intensity += pack._enabled ? 1 : 0;
+                String conDetails = pack._inspected;
+                double sx = pack._fgx + r, sy = pack._fgy + r/2;
+                CubicCurve cubicCurve = new CubicCurve(sx, sy,
+                        (3 * sx + x) / 4.0, firstQuadY.apply(sy, y + r/2),
+                        (sx + 3 * x) / 4.0, secondQuadY.apply(sy, y + r/2),
+                        x, y + r/2);
+                cubicCurve.setStroke((pack._enabled) ? Color.rgb(14, 77, 146) : Color.rgb(178, 190, 181));
+                cubicCurve.setFill(Color.color(0, 0, 0, 0));
+                if (pack._enabled) cubicCurve.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(255, 255, 255, 0.7), 30, 0.2, 0.0, 0.0));
+                Tooltip.install(cubicCurve, customTooltip(conDetails));
                 allConsDetails.append("\n").append(conDetails);
-                inLines.add(line);
-                spotlight.getChildren().add(line);
+                curves.add(cubicCurve);
+                spotlight.getChildren().add(cubicCurve);
             }
-            node.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(255, 255, 255, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
+            if (OBS_NODES_Y.contains(y)) // make observation nodes glow white
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(255, 253, 250, Math.min(0.5 + (intensity / 10.0), 1)), 1, 0.75, 0.0, 0.0));
+            else if (INF_NODES_Y.contains(y)) // make inflection nodes glow red
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(255, 40, 0, Math.min(0.5 + (intensity / 10.0), 1)), 1, 0.75, 0.0, 0.0));
+            else // make other nodes glow yale
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(14, 77, 146, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
             node.setOnAction(e -> inspectPopUp(stage, "Node " + n, nodeDetails + allConsDetails));
-            node.setOnMouseEntered(e -> { for (Line line : inLines) line.setStrokeWidth(3); });
-            node.setOnMouseExited(e -> { for (Line line : inLines) line.setStrokeWidth(1); });
+            node.setOnMouseEntered(e -> { for (CubicCurve curve : curves) curve.setStrokeWidth(3); });
+            node.setOnMouseExited(e -> { for (CubicCurve curve : curves) curve.setStrokeWidth(1); });
             spotlight.getChildren().add(node);
         }
 
-        // draw ACU
-        for (ACUNodeGene n : i.getACU().getNodes().getData()) {
+        // draw decision head
+        for (DHng n : i.getACU().getNodes().getData()) {
             double x = n.getX(), y = n.getY();
             String nodeDetails = n.inspect();
             Button node = new Button();
-            if (x == hiddenNodeX) x += r; // MRU intersection case
+            if (x == hiddenNodeX) x += r; // intersection case
             node.setLayoutX(x);
             node.setLayoutY(y);
             node.setTooltip(customTooltip(nodeDetails));
             StringBuilder allConsDetails = new StringBuilder();
-            ArrayList<Line> inLines = new ArrayList<>();
+            ArrayList<CubicCurve> curves = new ArrayList<>();
             int intensity = 0;
-            for (ACUConGene c : n.getInCons()) {
-                intensity += c.isEnabled() ? 1 : 0;
-                String conDetails = c.inspect();
-                double ax = c.getFG().getX();
-                if (ax == hiddenNodeX) ax += r; // MRU intersection case
-                Line line = new Line(ax+r, c.getFG().getY()+r/2, x, y+r/2);
-                line.setStroke((c.isEnabled()) ? Color.rgb(52, 199, 89) : Color.rgb(255, 59, 48));
-                if (c.isEnabled()) line.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(255, 255, 255, 0.7), 30, 0.2, 0.0, 0.0));
-                Tooltip.install(line, customTooltip(conDetails));
+            GraphicPack[] graphicPacks = n.getGraphicInCons();
+            for (GraphicPack pack : graphicPacks) {
+                intensity += pack._enabled ? 1 : 0;
+                String conDetails = pack._inspected;
+                double sx = pack._fgx + r, sy = pack._fgy + r/2;
+                if (sx == hiddenNodeX + r) sx += r; // intersection case
+                CubicCurve cubicCurve = new CubicCurve(sx, sy,
+                        (3 * sx + x) / 4.0, firstQuadY.apply(sy, y + r/2),
+                        (sx + 3 * x) / 4.0, secondQuadY.apply(sy, y + r/2),
+                        x, y + r/2);
+                cubicCurve.setStroke((pack._enabled) ? Color.rgb(80, 220, 100) : Color.rgb(178, 190, 181));
+                cubicCurve.setFill(Color.color(0, 0, 0, 0));
+                if (pack._enabled) cubicCurve.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(255, 255, 255, 0.7), 30, 0.2, 0.0, 0.0));
+                Tooltip.install(cubicCurve, customTooltip(conDetails));
                 allConsDetails.append("\n").append(conDetails);
-                inLines.add(line);
-                spotlight.getChildren().add(line);
+                curves.add(cubicCurve);
+                spotlight.getChildren().add(cubicCurve);
             }
-            node.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(255, 255, 255, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
+            if (CRITIC_NODES_Y.contains(y)) // make critic node glow orange
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(253, 106, 2, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
+            else if (SEER_NODES_Y.contains(y)) // make seer node glow violet
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(91, 10, 145, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
+            else // make other nodes glow emerald
+                node.setEffect(new DropShadow(BlurType.GAUSSIAN,
+                        Color.rgb(80, 220, 100, Math.min(0.5 + (intensity / 10.0), 1)), intensity, 0.75, 0.0, 0.0));
             node.setOnAction(e -> inspectPopUp(stage, "Node " + n, nodeDetails + allConsDetails));
-            node.setOnMouseEntered(e -> { for (Line line : inLines) line.setStrokeWidth(3); });
-            node.setOnMouseExited(e -> { for (Line line : inLines) line.setStrokeWidth(1); });
+            node.setOnMouseEntered(e -> { for (CubicCurve curve : curves) curve.setStrokeWidth(3); });
+            node.setOnMouseExited(e -> { for (CubicCurve curve : curves) curve.setStrokeWidth(1); });
             spotlight.getChildren().add(node);
         }
 
@@ -606,17 +619,18 @@ public class Utils {
     }
 
     /**
-     * Returns the individual with the highest score in the inputted population
-     * @param population - the population
-     * @return the individual with highest score
+     * This should only be used when champions are still relevant
+     * That is, right after an evolution step
+     * @param ecosystem - the ecosystem after an evolution step
+     * @return the fittest champion
      */
-    public static Individual getFittest(List<Individual> population) {
-        Individual fittest = population.get(0);
-        double fittestScore = fittest.getScore();
-        for (Individual i : population) {
-            if (i.getScore() > fittestScore) {
-                fittestScore = i.getScore();
-                fittest = i;
+    public static Individual championOfChampions(List<Species> ecosystem) {
+        Individual fittest = null;
+        double bestScore = Double.NEGATIVE_INFINITY;
+        for (Species s : ecosystem) {
+            if (s.getChampion().getScore() > bestScore) {
+                fittest = s.getChampion();
+                bestScore = fittest.getScore();
             }
         }
         return fittest;

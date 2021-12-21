@@ -13,7 +13,8 @@ public class Wumpus {
 
 	public Wumpus(Environment E) {
 
-		isDead = false;
+		//isDead = false;
+		isDead = true;
 
 		worldSizeKnowledge = E.getSize();
 		senses = new WumpusSensory(E);

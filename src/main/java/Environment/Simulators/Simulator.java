@@ -7,7 +7,7 @@ import NEAT.Individual;
 import Wumpus.Wumpus;
 import Wumpus.WumpusActionSet;
 
-import static Environment.RewardSystem.*;
+import static Environment.RewardConst.*;
 
 public abstract class Simulator {
 
@@ -27,10 +27,8 @@ public abstract class Simulator {
     protected int stepCounter;
     protected Environment environment;
 
-    public void setWorldSize(int s) { worldSize = s; }
     public int getHScore() { return hScore; }
     public int getWScore() { return wScore; }
-    public int getTimeSteps() { return timeSteps; }
     public int getStepCounter() { return stepCounter; }
     public Environment getEnvironment() { return environment; }
     public String getHAction() { return HumanActionSet.getName(hTakenAction); }
@@ -105,6 +103,8 @@ public abstract class Simulator {
                     }
                 }
                 break;
+            case HumanActionSet.NO_OP:
+                break; // do nothing
         }
         return reward;
 
@@ -126,6 +126,8 @@ public abstract class Simulator {
                 break;
             case WumpusActionSet.MOVE_DOWN: reward += actionCost;
                 if (!wumpus.moveDown()) bumped = true;
+                break;
+            case WumpusActionSet.NO_OP: // do nothing
                 break;
         }
         if (bumped) { reward += bumpCost;

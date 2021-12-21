@@ -65,7 +65,10 @@ public class SimulationController extends Controller {
         hProgress.getItems().add("Step " + S.getStepCounter() + String.format("\nScore: %d Taken Action: %s", S.getHScore(), S.getHAction()));
         wProgress.getItems().add("Step " + S.getStepCounter() + String.format("\nScore: %d Taken Action: %s", S.getWScore(), S.getWAction()));
 
-        hProgress.getItems().add("HA thinks " + S.getHActorThought() + "\nHC thinks " + S.getHCriticThought() + " while TD target " + S.getHTDTarget());
+        hProgress.getItems().add("[MOVE_FORWARD, TURN_RIGHT, TURN_LEFT, GRAB, SHOOT, NO_OP]" +
+                "\nPi(A|s) = " + S.getHActorThought() +
+                "\nV(s) = " + S.getHCriticThought() + ", R(s) = " + S.getHReceiveReward() +
+                "\nnextS = " + S.getHNextStatePred());
 
         hBump.setFill(Color.GHOSTWHITE);
         glitter.setFill(Color.GHOSTWHITE);
@@ -161,7 +164,7 @@ public class SimulationController extends Controller {
         E = S.getEnvironment();
         int worldSize = E.getSize();
 
-        hProgress.getItems().add("**ENV RESET**\n[MOVE_FORWARD, TURN_RIGHT, TURN_LEFT, GRAB, SHOOT]");
+        hProgress.getItems().add("**ENV RESET**\n");
         hProgress.getItems().add("SIMULATING " + h +
                 "\nStep " + S.getStepCounter() + String.format("\nScore: %d Taken Action: %s", S.getHScore(), S.getHAction()));
         wProgress.getItems().add("**ENV RESET**\n[MOVE_RIGHT, MOVE_LEFT, MOVE_UP, MOVE_DOWN]");

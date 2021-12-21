@@ -1,6 +1,5 @@
 package Environment.Controllers;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,7 +37,7 @@ public class LoginController extends Controller {
     @FXML private Button reviewBtn, runBtn, exitBtn;
     @FXML private RadioButton logEnableBtn;
 
-    @FXML public void runLab() throws IOException {
+    @FXML public void runLab() throws IOException, CloneNotSupportedException {
 
         primaryStage.removeEventFilter(KeyEvent.KEY_PRESSED, loginKeyEvent); // remove login key handler for this scene
 
@@ -159,7 +158,7 @@ public class LoginController extends Controller {
                     String text = selectedField.getText();
                     selectedField.setText((text.length() != 0) ? text.substring(0, text.length() - 1) : "");
                 }
-            } catch (IOException e) {
+            } catch (IOException | CloneNotSupportedException e) {
                 e.printStackTrace();
             }
             if (toField != null) changeSelectedTextField(toField);

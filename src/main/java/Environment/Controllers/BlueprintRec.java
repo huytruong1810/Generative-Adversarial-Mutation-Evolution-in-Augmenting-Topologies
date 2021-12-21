@@ -19,20 +19,19 @@ public class BlueprintRec extends Rectangle {
 
     public enum TileType { EMPTY, PIT, GOLD, UP, DOWN, LEFT, RIGHT, WUMPUS }
 
-    private final int tileSize;
+    private static final int tileSize = 200;
     private boolean occupied;
     private TileType tileType;
     private final Pane motherPane;
 
-    public BlueprintRec(Pane p, int size, double x, double y) {
-        tileSize = size;
+    public BlueprintRec(Pane p, double x, double y) {
         tileType = TileType.EMPTY;
         motherPane = p;
         occupied = false;
-        setWidth(size);
-        setHeight(size);
-        setLayoutX(x * size);
-        setLayoutY(y * size);
+        setWidth(tileSize);
+        setHeight(tileSize);
+        setLayoutX(x * tileSize);
+        setLayoutY(y * tileSize);
         setOnDragOver(e -> {
             if (e.getGestureSource() != this && e.getDragboard().hasString())
                 e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -74,7 +73,7 @@ public class BlueprintRec extends Rectangle {
 
     public StackPane getDirectionReplace(KeyCode keyCode) {
 
-        BlueprintRec newTile = new BlueprintRec(motherPane, tileSize, getLayoutX()/tileSize, getLayoutY()/tileSize);
+        BlueprintRec newTile = new BlueprintRec(motherPane, getLayoutX()/tileSize, getLayoutY()/tileSize);
         newTile.occupied = true;
         Image newImg = new Image(Objects.requireNonNull(getClass().getResource("/images/error.png")).toExternalForm());
         if (keyCode == KeyCode.W || keyCode == KeyCode.UP) {
@@ -98,7 +97,7 @@ public class BlueprintRec extends Rectangle {
             MouseButton eventButton = e.getButton();
             if (eventButton == MouseButton.SECONDARY) {
                 motherPane.getChildren().remove(newStackPane);
-                motherPane.getChildren().add(new BlueprintRec(motherPane, tileSize, newStackPane.getLayoutX()/tileSize, newStackPane.getLayoutY()/tileSize));
+                motherPane.getChildren().add(new BlueprintRec(motherPane, newStackPane.getLayoutX()/tileSize, newStackPane.getLayoutY()/tileSize));
             }
         });
 
@@ -106,11 +105,66 @@ public class BlueprintRec extends Rectangle {
 
     }
 
+    public static Node translate(char[] here, Pane pane, int x, int y) {
+
+        BlueprintRec tile = new BlueprintRec(pane, x, y);
+        Image image = null;
+
+        if (here[0] == 'P') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bppit.png")).toExternalForm());
+            tile.tileType = TileType.PIT;
+        }
+        else if (here[2] == 'G') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpgold.png")).toExternalForm());
+            tile.tileType = TileType.GOLD;
+        }
+        else if (here[3] == 'N') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpup.png")).toExternalForm());
+            tile.tileType = TileType.UP;
+        }
+        else if (here[3] == 'S') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpdown.png")).toExternalForm());
+            tile.tileType = TileType.DOWN;
+        }
+        else if (here[3] == 'W') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpleft.png")).toExternalForm());
+            tile.tileType = TileType.LEFT;
+        }
+        else if (here[3] == 'E') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpright.png")).toExternalForm());
+            tile.tileType = TileType.RIGHT;
+        }
+        else if (here[1] == 'W') {
+            image = new Image(Objects.requireNonNull(BlueprintRec.class.getResource("/images/bpwumpus.png")).toExternalForm());
+            tile.tileType = TileType.WUMPUS;
+        }
+
+        if (image != null) {
+            tile.occupied = true;
+            StackPane stackPane = new StackPane(tile, new ImageView(image));
+            stackPane.setLayoutX(tile.getLayoutX());
+            stackPane.setLayoutY(tile.getLayoutY());
+            stackPane.setOnMouseClicked(e -> {
+                MouseButton eventButton = e.getButton();
+                if (eventButton == MouseButton.SECONDARY) {
+                    pane.getChildren().remove(stackPane);
+                    pane.getChildren().add(new BlueprintRec(pane, stackPane.getLayoutX()/tileSize, stackPane.getLayoutY()/tileSize));
+                }
+            });
+            return stackPane;
+        }
+
+        tile.occupied = false;
+        return tile;
+
+    }
+
     private StackPane toStackPane(String dragIdentifier) {
 
-        BlueprintRec newTile = new BlueprintRec(motherPane, tileSize, getLayoutX()/tileSize, getLayoutY()/tileSize);
+        BlueprintRec newTile = new BlueprintRec(motherPane, getLayoutX()/tileSize, getLayoutY()/tileSize);
         newTile.occupied = true;
         Image image = new Image(Objects.requireNonNull(getClass().getResource("/images/error.png")).toExternalForm());
+
         switch (dragIdentifier) {
             case "PitImg":
                 image = new Image(Objects.requireNonNull(getClass().getResource("/images/bppit.png")).toExternalForm());
@@ -137,7 +191,7 @@ public class BlueprintRec extends Rectangle {
             MouseButton eventButton = e.getButton();
             if (eventButton == MouseButton.SECONDARY) {
                 motherPane.getChildren().remove(stackPane);
-                motherPane.getChildren().add(new BlueprintRec(motherPane, tileSize, stackPane.getLayoutX()/tileSize, stackPane.getLayoutY()/tileSize));
+                motherPane.getChildren().add(new BlueprintRec(motherPane, stackPane.getLayoutX()/tileSize, stackPane.getLayoutY()/tileSize));
             }
         });
 
