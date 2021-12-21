@@ -81,15 +81,15 @@ This will take the user to a blueprint environment scene where a world blueprint
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Current Results:
 
-![Environment Design 1](src/main/resources/images/design1.PNG)
+![Environment Design 1](src/main/resources/images/design1.png)
 
 ##### Figure 5: We start out with this custom environment to train the neural architectures in.
 
-![Environment Design 2](src/main/resources/images/design2.PNG)
+![Environment Design 2](src/main/resources/images/design2.png)
 
 ##### Figure 6: After successful convergence among the population on the first design, we switch the environment design to this one.
 
-![Convergence Graph](src/main/resources/images/multimodal.PNG)
+![Convergence Graph](src/main/resources/images/multimodal.png)
 
 ##### Figure 7: The orange line represents the smooth-out max score while the blue line represents the smooth-out population average at each generation. We observe that at first, the population of ANNs slowly obtains higher scores and max out at generation ~800. We then switch the environment to a new one which make their performance crashes steeply. However, overtime, they also learn to do better in this second environment at generation ~2000. We then switch back to the first environment and observe that they still manage to do well in the first one.
 
