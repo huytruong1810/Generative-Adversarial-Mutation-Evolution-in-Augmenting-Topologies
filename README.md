@@ -3,7 +3,7 @@
 ### Major: Computer Science - Software Engineering
 #### @ University of Illinois at Chicago
 
-##Description:
+## Description:
 
 This research adopts the Wumpus World concept in Artificial Intelligence by Michael Genesereth, 
 and the wumpuslite Java frame (designed by Professor James P. Biagioni in Artificial Intelligence II at UIC) as the environment (task). 
@@ -80,7 +80,7 @@ This will take the user to a blueprint environment scene where a world blueprint
 ##### Figure 4: A custom-built simulation scene. The circles on right panes represent the perception channels for the agents in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still simple. 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-##Current Results:
+## Current Results:
 
 ![Environment Design 1](src/main/resources/images/design1.png)
 
@@ -100,6 +100,6 @@ We hypothesize that because these ANNs are initially "raised" on the first envir
 Therefore, when moved to a new environment, they try to incorporate what they know from the first to solve this new one.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-##Next Steps:
+## Next Steps:
 
 We are implementing the GAN framework as a set of supervisor GCNs that can sample optimal mutations and sort out effective architectures in the ANN population.
