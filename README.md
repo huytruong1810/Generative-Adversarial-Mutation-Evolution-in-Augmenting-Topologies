@@ -27,11 +27,16 @@ The research goal is to have these ANN-based agents exhibit an underlying capabi
 3. And Learning (able to learn from past episodic experiences).
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Summary on Accomplishments:
 
 During the configuration and revising of my research project, I have read numerous research resources in the AI, specifically the Reinforcement Learning, domain to inspect if state-of-the-art theories are compatible with my framework and if they could solve performance roadblocks. This research project has earned me my Capstone graduation from the UIC Honors College. I am currently extending this framework for the Master’s Thesis at my UIC Graduate program.
+
 •	I have drawn experiences in the evolutionist AI approach from the paper Neural Evolution of Augmenting Topologies (NEAT), and its referenced materials. By randomly mutating and permuting neural structures piecewise, high-performing ANN architectures are discovered. After training, networks leverage their topologically addressable flow-paths and learn hyperplanes of the latent manifolds to aid them during testing episodes. My personal design decision was that all submodules, including LSTM gates, Actor, and Critic networks, share the same architectures but learn independent latent structures. Overall, NEAT contributes the foundation to regulate wide structural priors of neural networks to my research.
+
 •	I have also extensively familiarized myself with the connectionist AI approach by conducting various independent studies and coursework on Deep Learning. I implement the NEAT apparatus to push deep learners with architectural sparsity constraints to perform generalization on observatory experiences from high dimensional input sensors. Under the deterministic dynamics of the Wumpus World hidden transition model, these parametrized models can locate the global maximum of the objective reward-based function. However, their interpolative faculties are confined to a restricted convex hull of observations drawn from sub-distributions of environmental configurations.
+
 •	Due to the factorial volume of high-dimensionality observations drawn from arbitrarily configured environments, my generated models cannot locally interpolate beyond the sparse and rapidly shifting training distribution under fluctuant policies. Therefore, I delve into the idea of leveraging the preservative exploration faculties of deep learners by implementing my version of the Proximal Policy Optimization (PPO) and Intrinsic Curiosity Module (ICM). This contributes immensely to my model's exploration-driven behaviors and stability of learned policies.
+
 •	Due to the intractable search space of piece-wise neural architectures, semi-directional architecture search, such as NEAT, may not always converge. I steer my studies towards adaptive generative models such as the Generative Adversarial Neural Architecture Search. My design decision is to implement GAN controllers that render a directional search and samples gradually towards the optimal distribution of piece-wise mutations. I am currently collaborating this framework onto the NEAT foundation of my research project.
 My plan for this Reinforcement Learning theoretical framework is to leverage a problem's intrinsically interpolative nature. I want to encode the ability for deep models to traverse within the latent manifolds of the problem, sort of like "learning from imagination". Given that each network can produce action for interaction with the MDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we reformulate that each network can act as transitional dynamic predictors. With this formulation, given an initial observation, each network can sample trajectories with this self-played transition model and learn from "imagined" experiences.
  
@@ -97,7 +102,7 @@ This will take the user to a blueprint environment scene where a world blueprint
 ##### Figure 4: A custom-built simulation scene. The circles on right panes represent the perception channels for the agents in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still simple. 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Current Results:
+## Summary on Current Results:
 
 ![Environment Design 1](src/main/resources/images/design1.png)
 
