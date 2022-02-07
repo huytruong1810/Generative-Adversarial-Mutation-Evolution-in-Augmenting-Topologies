@@ -3,7 +3,7 @@
 ### Major: Computer Science - Software Engineering
 #### @ University of Illinois at Chicago
 
-## Description:
+## Description
 
 This research adopts the Wumpus World concept in Artificial Intelligence by Michael Genesereth, 
 and the wumpuslite Java frame (designed by Professor James P. Biagioni in Artificial Intelligence II at UIC) as the environment (task). 
@@ -27,7 +27,7 @@ The research goal is to have these ANN-based agents exhibit an underlying capabi
 3. And Learning (able to learn from past episodic experiences).
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Summary on Accomplishments:
+## Summary on Accomplishments
 
 During the configuration and revising of my research project, I have read numerous research resources in the AI, specifically the Reinforcement Learning, domain to inspect if state-of-the-art theories are compatible with my framework and if they could solve performance roadblocks. This research project has earned me my Capstone graduation from the UIC Honors College. I am currently extending this framework for the Master’s Thesis at my UIC Graduate program.
 
@@ -41,6 +41,8 @@ During the configuration and revising of my research project, I have read numero
 My plan for this Reinforcement Learning theoretical framework is to leverage a problem's intrinsically interpolative nature. I want to encode the ability for deep models to traverse within the latent manifolds of the problem, sort of like "learning from imagination". Given that each network can produce action for interaction with the MDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we reformulate that each network can act as transitional dynamic predictors. With this formulation, given an initial observation, each network can sample trajectories with this self-played transition model and learn from "imagined" experiences.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## UI/UX Designs
 
 ![Login screen](src/main/resources/images/loginUI.PNG)
 
@@ -94,7 +96,7 @@ This will take the user to a blueprint environment scene where a world blueprint
 ##### Figure 4: A custom-built simulation scene. The circles on right panes represent the perception channels for the agents in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still simple. 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Summary on Current Results:
+## Summary on Current Results
 
 ![Environment Design 1](src/main/resources/images/design1.png)
 
@@ -114,13 +116,13 @@ We hypothesize that because these ANNs are initially "raised" on the first envir
 Therefore, when moved to a new environment, they try to incorporate what they know from the first to solve this new one.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Next Steps:
+## Next Steps
 
 We are implementing the GAN framework as a set of supervisor GCNs that can sample optimal mutations and sort out effective architectures in the ANN population.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Preferences:
+## Preferences
 Stanley, K. (n.d.). Evolving Neural Networks through Augmenting Topologies. The MIT Press Journals - Neural Network Research Group. Retrieved January 13, 2022, from http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf 
 
 Staudemeyer, R. C., & Morris, E. R. (2019, September 12). Understanding LSTM -- a tutorial into long short-term memory recurrent neural networks. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/1909.09586 
