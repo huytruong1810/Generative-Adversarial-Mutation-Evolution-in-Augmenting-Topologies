@@ -41,7 +41,6 @@ During the configuration and revising of my research project, I have read numero
 My plan for this Reinforcement Learning theoretical framework is to leverage a problem's intrinsically interpolative nature. I want to encode the ability for deep models to traverse within the latent manifolds of the problem, sort of like "learning from imagination". Given that each network can produce action for interaction with the MDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we reformulate that each network can act as transitional dynamic predictors. With this formulation, given an initial observation, each network can sample trajectories with this self-played transition model and learn from "imagined" experiences.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 ## UI/UX Designs
 
 ![Login screen](src/main/resources/images/loginUI.PNG)
@@ -60,7 +59,6 @@ My version of NEAT implementation involves:
 
 This implementation ensures that the inflow of newborn individual solutions and outflow of evicted solutions are maintained at consistent rates which sustains a stable population count. Moreover, speciation ensures the retention of a diverse population of solution architectures, thus, maintaining and developing a promising hypothesis space in parallel.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 At the design level of the solution architectures, a Long Short-Term Memory architecture (the Memory Head) feeds into an Actor-Critic-Seer architecture (Decision Head). 
 The Memory Head needs to learn a sequential memory processor that maps from the space of observations and previously taken actions to the memory encoding space (hidden layer). 
@@ -81,7 +79,6 @@ The total outputted gradients of these Decision subunits are back propagated thr
 Crucial implementation decision: In the Memory Head, I decide that while each gate has its own set of parameters, internal & output states, their architectures are shared. 
 Similarly, in the Decision Head, while actor, critic, and seer have their own respective set of parameters, internal & output states, actor shares the same architecture with the critic and seer with some minor differences in the output layer arrangements because actor is performing Logistic Classification and critic and seer are performing Regression.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ![Environment Building scene](src/main/resources/images/buildEnvUI.PNG)
 
@@ -121,7 +118,6 @@ Therefore, when moved to a new environment, they try to incorporate what they kn
 We are implementing the GAN framework as a set of supervisor GCNs that can sample optimal mutations and sort out effective architectures in the ANN population.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 ## Preferences
 Stanley, K. (n.d.). Evolving Neural Networks through Augmenting Topologies. The MIT Press Journals - Neural Network Research Group. Retrieved January 13, 2022, from http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf 
 
