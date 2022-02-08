@@ -5,13 +5,11 @@
 
 ## Description
 
-This research adopts the Wumpus World concept in Artificial Intelligence by Michael Genesereth, 
-and the wumpuslite Java frame (designed by Professor James P. Biagioni in Artificial Intelligence II at UIC) as the environment (task). 
-I want to design agent functions that can solve this task. 
-With Professor Piotr Gmytrasiewicz’s advisory, I have added the factor of Multi-Agent and Dynamic to this Partially Observable and Continuous environment by implementing the Wumpus as a simple-reflex agent. 
-The expected product of this research is a Reinforcement Learning technique that can aid programmers in culturing their space of strategies/solutions to real-world problems. 
-In this project, I propose artificial neural networks (ANN) as the basis of rationality for participating agents, i.e. the human and Wumpus agent functions. 
-Throughout this description, I will be using neural networks and solutions interchangeably.
+This research adopts the Wumpus World concept in Artificial Intelligence and builds on the wumpuslite Java-skeleton designed by Professor James P. Biagioni in Artificial Intelligence II at UIC. 
+The goal of this research is to have an auto-regulated ML system that produces agent functions for this Wumpus World environment, formalized as a Markov Decision Process (MDP). 
+With Professor Piotr Gmytrasiewicz’s advisory, I have added the factor of Multi-Agent (and Dynamic) to this Partially-Observable-MDP by implementing the Wumpus as an agent. 
+The product of this research is a Reinforcement Learning technique that adds to the literature of Deep RL methods. 
+In this project, I propose Generative Adversarial Neural Architecture Search (GA-NAS) as the basis for regulating the population of artificial neural networks (ANN) for participating agent functions, i.e. the human and Wumpus agent functions.
 
 Here is a briefing on the background of the Wumpus World environment:
 1. The utility of the human agent is to maximize its performance measure by reaching the gold as fast and safest as possible (should learn to avoid death by Wumpus or bottomless pits).
