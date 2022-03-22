@@ -23,9 +23,9 @@ Additionally, I have coupled this POMDP design with dynamic and multiagent by ad
 3. The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
 The research goal is to have these ANN-based agents exhibit an underlying capabilities of logical reasoning and strategic planning in order to maximize their utilities. That is, the agents should have the capabilities of the following agent types:
-1. Model-based reflex (able to keep track of the changes in the partially observable environment), 
-2. Utility-based (able to consider the best way to achieve its reward-based objective), 
-3. And Learning (able to learn from past experiences).
+1. Model-based reflex (retain a tractable model of the the PO environment), 
+2. Utility-based (perform rollout searches for the best action plan to maximizes its reward-based objective), 
+3. And Learning (has learnable parameters that can be tuned using experiences).
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Summary on Accomplishments
