@@ -48,19 +48,6 @@ My plan for this Reinforcement Learning theoretical framework is to leverage a p
 
 ##### Figure 1: This is the login screen of the program. User can specify the Wumpus world size (dimension of the 2D square grid world); number of time steps (each time step is a time unit in a training/testing episode); max population (the number of solution architectures at any generation); and number of training/testing episodes (the number of chances each solution gets to improve itself and get evaluated). 
 
-I implemented the NeuroEvolution of Augmenting Topologies (NEAT) algorithm proposed by Kenneth O. Stanley (to learn more, click [here](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)) as a control for non-deterministically producing agent functions. 
-My version of NEAT implementation involves:
-
-1. Initialize a population of primitively defined solution architectures/parameters
-2. Speciate the population of architectures using a genomic distance function, 
-3. Have individuals in a species train in the Wumpus environment
-4. Yield high-performing individuals while evict low-performing ones
-5. Terminate species that exceed the minimum threshold of individual counts, 
-6. Finally, have successful species reproduce using a genetic algorithm to fill in the spot of evicted individuals. 
-
-This implementation ensures that the inflow of newborn individual solutions and outflow of evicted solutions are maintained at consistent rates which sustains a stable population count. Moreover, speciation ensures the retention of a diverse population of solution architectures, thus, maintaining and developing a promising hypothesis space in parallel.
-
-
 At a high level, NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
 1. Initialize a primitive population of DAGs with only the frame nodes (input, hidden, and output nodes). The nodes hold the parametrization of neural biases and connections hold the parametrization of neural weights. These components also hold their respective NEAT's innovation identity and Adam optimizer's parameters. We name the architectural sum of these parts "genomes" and the neural expressions of them "phenotypes" for the rest of this paper.
 2. Speciate each non-speciated genome using existing species' representatives and a distance function that considers the disjunctions and protrusions of innovation identities, which are hyperparameters.
