@@ -61,17 +61,17 @@ My version of NEAT implementation involves:
 This implementation ensures that the inflow of newborn individual solutions and outflow of evicted solutions are maintained at consistent rates which sustains a stable population count. Moreover, speciation ensures the retention of a diverse population of solution architectures, thus, maintaining and developing a promising hypothesis space in parallel.
 
 
-At the design level of the solution architectures, a Long Short-Term Memory architecture (the Memory Head) feeds into an Actor-Critic-Seer architecture (Decision Head). 
-The Memory Head needs to learn a sequential memory processor that maps from the space of observations and previously taken actions to the memory encoding space (hidden layer). 
-The Decision Head needs to learn to map from this encoding space to the probabilistic distributions space representing the probabilities of different allowed actions (actor layer), 
-a real-numbered space respresenting the state-value (critic layer), and a real-numbered tuple space representing the prediction of the next observation (seer layer). 
-What are the details of these 3 output layers? 
-The actor decides on the policy that the agent will be taking given the past observation sequences. It is trained using Vanilla Policy Gradient (VPG) method.
-The critic estimates the state's values of environmental observation sequences. It is trained using Temporal Difference (TD-lambda) Learning. This value is used to train the actor, i.e. criticize the actor's decisions. 
-The seer predicts next observations based on past observation sequences. This is used to form the Intrinsic Curiosity Module (ICM) for actor's curiosity-driven exploration. 
-Conceptually, during SGD, after each end-to-end forward pass from percept history to action-probability-distribution, state-value-estimation, and next-state-prediction, 
-the environment returns reward and next state which signals gradient for actor's training, MSE loss minimization for critic & seer's training. 
-The total outputted gradients of these Decision subunits are back propagated through the Memory Head to train the LSTM gates.
+At a high level, NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
+1. Initialize a primitive population of DAGs with only the frame nodes (input, hidden, and output nodes). The nodes hold the parametrization of neural biases and connections hold the parametrization of neural weights. These components also hold their respective NEAT's innovation identity and Adam optimizer's parameters. We name the architectural sum of these parts "genomes" and the neural expressions of them "phenotypes" for the rest of this paper.
+2. Speciate each non-speciated genome using existing species' representatives and a distance function that considers the disjunctions and protrusions of innovation identities, which are hyperparameters.
+3. Optimize the phenotypes in the Wumpus World POMDP to minimize the policy gradient loss which considers a defined reward function.
+4. Collect testing scores from the phenotypes and discard phenotypes with scores below a threshold, which is a hyperparameter.
+5. Calculate species score as the average of its individuals' scores and terminate species with individual counts below a threshold, which is a hyperparameter.
+6. Let top-performing species reproduce by employing a genetic crossover procedure to produce offsprings that fill in the spot of displaced individuals. Repeat step 2 on event-driven signals.
+
+This implementation guarantees that the influx of aborning genomes and discharge of low-performing genomes are maintained and the population count is stable, which supports the efficiency of this implementation. Speciation ensures the retention of diverse DAGs of genomes, thus, defending and optimizing a diverse hypothesis space.
+
+At the design level of the phenotypes, a Long Short-Term Memory (LSTM) architecture, named the Memory Head, feeds into an Actor-Critic-Seer architecture, named the Decision Head. The Memory Head maps sequences of observations and actions to memory encodings. The Decision Head maps memory encodings to the probabilistic distributions of actions (actor head), a continuous value representing the state-value (critic head), and a continuous tuple representing the prediction of the next observation (seer head). The actor determines the policy that the agent is taking and is trained by maximizing the advantage policy gradient objective. The critic estimates the state's values of observation sequences and is trained by minimizing the Temporal Difference error. This value is used to train the actor, i.e. criticize the current policy. The seer predicts the next observations based on past observation sequences and is trained by minimizing the Mean Squared Error with confirmed observations sampled from the dynamics. This is known as the Intrinsic Curiosity Module for the curiosity-driven exploration of the policy. Conceptually, during training, per end-to-end forward pass from percept history to action distribution, value estimation, and observation prediction, the environment returns reward and the next observation which signals optimization of actor, critic, and seer's parameters. The total gradients of these heads are backpropagated through the Memory Head.
 
 ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 
