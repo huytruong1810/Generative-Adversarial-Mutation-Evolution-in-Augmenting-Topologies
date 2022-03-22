@@ -1,23 +1,25 @@
-# Research Project: Generative Adversarial in Augmenting Mutation-Evolution (GAAME)
+# Generative Adversarial in Augmenting Mutation-Evolution
 ### Author: Truong Nguyen Huy
 ### Major: Computer Science - Software Engineering
 #### @ University of Illinois at Chicago
 
-## Description
+## Abstract
 
-This research adopts the Wumpus World concept in Artificial Intelligence and builds on the wumpuslite Java-skeleton designed by Professor James P. Biagioni in Artificial Intelligence II at UIC. 
-The goal of this research is to have an auto-regulated ML system that produces agent functions for this Wumpus World environment, formalized as a Markov Decision Process (MDP). 
-With Professor Piotr Gmytrasiewicz’s advisory, I have added the factor of Multi-Agent (and Dynamic) to this Partially-Observable-MDP by implementing the Wumpus as an agent. 
-The product of this research is a Reinforcement Learning technique that adds to the literature of Deep RL methods. 
-In this project, I propose Generative Adversarial Neural Architecture Search (GA-NAS) as the basis for regulating the population of artificial neural networks (ANN) for participating agent functions, i.e. the human and Wumpus agent functions.
+This research targets a class of neural controllers that performs directed searches for neural solutions to Partially Observable Markov Decision Processes (POMDPs). The Wumpus World POMDP is selected as the experimentation subject with a novel modification of allowing the Wumpus to move, which adds the factor of dynamic. The goal is to test a hybrid class of neural systems that samples neural agent functions under the constraints of a partially observable and dynamic environment.
 
-Here is a briefing on the background of the Wumpus World environment:
-1. The utility of the human agent is to maximize its performance measure by reaching the gold as fast and safest as possible (should learn to avoid death by Wumpus or bottomless pits).
-2. **[Personal design]** The utility of the Wumpus agent is to maximize its performance measure by terminating the human agent as fast and safest as possible (should learn to avoid death by human arrows). 
-3. The human has a number of perception capabilities: smelling Wumpus's stench, feeling pit's breeze, seeing gold's glitter, feeling cave border collisions, hearing Wumpus's death scream. 
-4. **[Personal design]** The Wumpus has a number of perception capabilities: smelling the human's sense direction and intensity where the human has come across.
-5. The human is allowed to perform a number of actions: turning left/right, moving forward, shooting arrows, bending down for gold, and doing nothing (skipping turn).
-6. **[Personal design]** The Wumpus is allowed to perform a number of actions: moving in the 4 standard axis-directions.
+The neural network model has been accredited for its capability of learning robust classes of transformations which helps reduce the need for extensive feature engineering. Gradient-Descent on neural parameters has allowed for the development of diverse end-to-end systems without considerable geometric regularizing. Even though this universal approximability has allowed it to span over diverse densities of function classes on the geometric domain, this is conditioned on the arbitrariness of neural representations. Neural Architecture Search (NAS) addresses this by introducing the notion of search strategies on the space of cell connectivity. Among the diverse classes of NAS, the Evolutionary Algorithm has gained popularity for its resemblance to the natural selection process. Particularly, the Neuroevolution of Augmenting Topologies (NEAT) algorithm represents the process of neural genesis, where the DAG representations of neural structure are enumerated randomly. In a different direction of research, Generative Adversarial Neural Architecture Search (GA-NAS) challenged the optimality limitations of NAS by interpolating between importance sampling and the generative adversarial process with reinforcement learning flavor. In this research, I propose a neural search strategy that systematically merges pointwise topological mutations with this class of generative adversarial.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Description of my version of the Wumpus World POMDP:
+The Wumpus world is a 4x4 grid where each location can contain agents, pits, and/or gold. The agents' and objects' locations are randomly generated. During experimentation, we also explore fixed configurations of the environment for inspection of the controller's behavior. 
+The human's PEAS are as follows:
+The (not crosswise) neighboring locations to a live wumpus's location have a stench that can be perceived by the human. The (not crosswise) neighboring locations to the pit's location have a stench that can be perceived by the human. In the location of the gold, the human can perceive glitter. When the human walks into the grid's border, it stays still and perceives a bump. When the wumpus is killed, a scream can be perceived by the human regardless of its current location on the grid.
+There are actions to turn right, turn left, and go forward which allows the human to traverse the grid. The action grab can be used to pick up the gold. It is only effective if the human is in the same location as the gold. The action shoot can be used to launch an arrow in a straight line in the direction that the human is facing. The arrow can kill the wumpus if it is in the line of flight. The human only has one arrow but the action can be invoked many times, which has no effects if there is no arrow left.
+The human gets a massive penalty and the episode terminates if it enters a location containing a pit or a live wumpus. The human gets a massive reward and the episode terminates if it picks up the gold in the gold location. The human also gets minor penalties for each taken action and for bumping into the wall.
+Additionally, I have coupled this POMDP design with dynamic and multiagent by adapting the Wumpus's PEAS as follows:
+The Wumpus can perceive the human's scent in its current location if a human has traversed over it. The scent has a direction and intensity indicator. As time goes on, the scent intensity will decrease and cease to exist at a point.
+There are actions to go right, left, up, and down which allows the Wumpus to traverse the grid.
+The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
 The research goal is to have these ANN-based agents exhibit an underlying capabilities of logical reasoning and strategic planning in order to maximize their utilities. That is, the agents should have the capabilities of the following agent types:
 1. Model-based reflex (able to keep track of the changes in the partially observable environment), 
