@@ -23,6 +23,7 @@ The human's PEAS are as follows:
 •	There are actions to turn right, turn left, and go forward which allows the human to traverse the grid. The action grab can be used to pick up the gold. It is only effective if the human is in the same location as the gold. The action shoot can be used to launch an arrow in a straight line in the direction that the human is facing. The arrow can kill the wumpus if it is in the line of flight. The human only has one arrow but the action can be invoked many times, which has no effects if there is no arrow left.
 
 •	The human gets a massive penalty and the episode terminates if it enters a location containing a pit or a live wumpus. The human gets a massive reward and the episode terminates if it picks up the gold in the gold location. The human also gets minor penalties for each taken action and for bumping into the wall.
+
 Additionally, I have coupled this POMDP design with dynamic and multiagent by adapting the Wumpus's PEAS as follows:
 
 •	The Wumpus can perceive the human's scent in its current location if a human has traversed over it. The scent has a direction and intensity indicator. As time goes on, the scent intensity will decrease and cease to exist at a point.
@@ -53,6 +54,7 @@ NEAT is implemented as a control for the nondeterministic production of DAGs. My
 
 Note: innovation identity upper-bound indirectly effects how many hidden nodes we can have in our architectures, which significantly affect genome’s performances. This number also significantly impacts the computation complexity of our NEAT procedures, especially when incorporated with the GAN REINFORCE agents (more on this later). Therefore, due to the lack of computation resources, we restrict our tuning of this number to within the 0-100 range.
  
+ ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 Figure 3: A genome’s DAG which demonstrates the structural sparsity of described architectures. The blue region is under Memory Head while the green is under Decision Head. At the leftmost layer, white vertices are observation input head and orange are previous action and state-value input head. At the rightmost region, green vertices are the policy head (actor), orange is the state-value head (critic), and purple is the ICM head (seer). This architecture is generated under an uninformed random mutation function.
 
 We define a full loop of procedures from 2 to 8 as a "generation". Therefore, a complete generation consists of top-performing species with each species consisting of surviving genomes. This implementation guarantees that the influx of aborning genomes and discharge of low-performing genomes are maintained, and the population count is stable, which supports the efficiency of this implementation. Speciation ensures the retention of diverse DAGs of genomes, thus, defending and optimizing a diverse hypothesis space.
@@ -81,6 +83,7 @@ The architecture of the discriminator consists of two components: the Graph Conv
 
 We observe a challenge. Because NEAT initializes a uniform primitive population, the pool of top-performing genomes may never be updated, which stagnates the learning procedures of the two supervisors. To avoid this, we initialize a global mutator that samples random mutations and is never optimized. For the first few generations, we run this mutator on each genome in the population in parallel with the process of each species' supervisors optimizing their respective genomes. With this random process, we jump-start speciation and the optimization of each species' supervisors.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## III. RESULTS AND ABLATION STUDIES
 ### 1. NEAT WITH MANUALLY TUNED RANDOM MUTATION
 
@@ -88,6 +91,7 @@ We study the case where our implementation of NEAT is used alone with random poi
 
 We begin with fixating an environment configuration to study the convergence properties of applying the A2C method to neural agents under the constraint of sparsity. Around generation 800, we observe that the agents consistently reach the highest possible score (~700) in this environment configuration while retaining sparse connectivity architectures. To test the robustness of our method, we steeply change the configuration of the environment. As expected, the agent's score crashes due to the unfamiliar terrains. However, around 1000 generations later, we observe that the agents reach the highest possible score in this new configuration. Remarkably, when we continually switch the configuration back and forth, some agents still manage to perform optimally. That is, there exist architectures that can generalize and effectively interpolate a compromised policy for both environments. As we observe their behaviors in the two environments, their strategies closely resemble each other. For example, the action of turning left in some states in the first environment yields maximal returns. In the second one, even though turning right in some states yields maximal returns, the agents choose to turn left until their resulting orientation is similar to a single right turn. We hypothesize that the initial environment deeply influences the agent's architecture and policy expression as they “grow” up, so they lose the capability of turning right even when their architectures become more complex.
  
+ ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 Figure 4: Score progression in NEAT with manually tuned random mutation, a population size of 1000, and “fixed-changed” configured environments. The orange lines represent the maximum score achieved in each generation while the blue/green lines represent the average score with respect to the whole population. We observe that the mass population can catch up exponentially with the global maximal score once a stable optimal policy is discovered by some agents. This demonstrates a good convergence quality of the NEAT process. The first steep decline around generation 800 is due to a change in environment configuration. The second steep decline around generation 2000 is due to another change in environment configuration. We see that in both cases, the population can bring their score performance back up quickly.
 
 We run this ablated controller on randomly configured environments and observe that the agent's policies converge to a local maximum (~300) of staying immobile. These randomly sampled architectures are not robust enough to allow better exploration on randomly sampled terrains. That is, positive rewards are highly sparse in this hostile Wumpus World, and sampled agents cannot develop adequate policies to handle the partial-observability and dynamic nature of the given task.
@@ -100,20 +104,24 @@ With the addition of the RL generative adversarial controllers, the computation 
 
 Prospectively, with our method, as the supervisor's losses decrease, the sampled DAGs diversify greatly over the course of the first few generations.
  
+ ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 Figure 5: We see that the population diversifies into 6 different species in a few starting generations. Over the course of more generations, the number of species reach equilibrium at 4, i.e., four successful species concurrently exist for the rest of this trial.
 
 Interestingly, when observing the behaviors of each species' mutator, we see that for successful species, i.e., species with architectures favored by its discriminator, the mutators sample mutations until maximum time horizon termination. In contrast, in non-successful species, their mutators tend to terminate the sampling process early. This is apparent as sampling more would result in the discriminator's rejection anyways. The mutators understand the optimal directions of architecture sampling while giving up on unproductive architectures.
 
 We use the configuration fixation experiment used in part 1 and observe that the agents reach global maximum at a significantly faster rate even though the population size is significantly decreased.  
  
+ ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 Figure 6: Under the control of GAN supervisors, a population size of 100, and a fixed-configured environment, score converges towards global optimum (~0.7) in merely 200 generations.
 
 We also observe that when running more generations from the initial maximal score generation, the pool of top-performing genomes stops changing. This results in the mutators stop sampling new mutations and the discriminator’s judgements become approximately indifferent (~50-50). That is, they are in a deadlock position. We conclude that this adaptive mutation framework implicitly understands the relationship between a DAG structure with its phenotype’s performance.
 
 In the condition of arbitrarily configured environments, i.e., the full POMDP, the score fluctuates constantly. However, learned policies are adaptive enough to consistently achieve maximal score (~0.7) in many arbitrarily configured environments.
  
+ ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
 Figure 7: Under the control of GAN supervisors, a population size of 100, and arbitrarily configured environments, score fluctuations occur instead of convergence towards local optimum (~0.2) discovered by NEAT without the supervisors. This is a good quality for convergence as the supervisors are actively steering score progression out of local performance traps.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## IV. CONCLUSION
 During the configuration and revising of this research project, I have reviewed numerous resources in the Reinforcement Learning literature to inspect if state-of-the-art theories are compatible with my framework and if they could solve performance roadblocks:
 
@@ -127,6 +135,7 @@ During the configuration and revising of this research project, I have reviewed 
 
 For future work, we can leverage the ensemble and model-based natures of this framework by encoding the ability for deep models to learn from imagined rollouts and act as targets for each other's training. In brief, given that learners sample action for interaction with the POMDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we can formalize the process of each learner acting as the other's target transition model. This can result in further optimization stability and trajectory sampling efficiency.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## V. APPENDIX
 ### Deep A2C hyperparameters
 - number of training episodes	3
@@ -175,9 +184,11 @@ For future work, we can leverage the ensemble and model-based natures of this fr
 - discriminator accepts resulting DAG	0.2
 - discriminator rejects resulting DAG	-0.1
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Acknowledgments
 I thank Professor Piotr Gmytrasiewicz and Professor Ian Kash for assistance and advice on the AI-Reinforcement Learning literature.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## References
 Chung, J., Gulcehre, C., Cho, K., & Bengio, Y. (2014). Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling. Retrieved from https://arxiv.org/abs/1412.3555
 
@@ -200,7 +211,3 @@ Stanley, K. O., & Miikkulainen, R. (2002). Evolving Neural Networks through Augm
 Staudemeyer, R. C., & Morris, E. R. (2019). Understanding LSTM -- a tutorial into Long Short-Term Memory Recurrent Neural Networks. Retrieved from https://arxiv.org/abs/1909.09586
 
 Volodymyr Mnih, A. P., Lillicrap, T. P., Harley, T., Silver, D., & Kavukcuoglu, K. (2016). Asynchronous Methods for Deep Reinforcement Learning. Retrieved from https://arxiv.org/abs/1602.01783
-
-
-![NEAT Lab scene](src/main/resources/images/labUI.PNG)
-
