@@ -5,121 +5,202 @@
 
 ## Abstract
 
-This research targets a class of neural controllers that performs directed searches for neural solutions to Partially Observable Markov Decision Processes (POMDPs). The Wumpus World POMDP is selected as the experimentation subject with a novel modification of allowing the Wumpus to move, which adds the factor of dynamic. The goal is to test a hybrid class of neural systems that samples neural agent functions under the constraints of a partially observable and dynamic environment.
-
-The neural network model has been accredited for its capability of learning robust classes of transformations which helps reduce the need for extensive feature engineering. Gradient-Descent on neural parameters has allowed for the development of diverse end-to-end systems without considerable geometric regularizing. Even though this universal approximability has allowed it to span over diverse densities of function classes on the geometric domain, this is conditioned on the arbitrariness of neural representations. Neural Architecture Search (NAS) addresses this by introducing the notion of search strategies on the space of cell connectivity. Among the diverse classes of NAS, the Evolutionary Algorithm has gained popularity for its resemblance to the natural selection process. Particularly, the Neuroevolution of Augmenting Topologies (NEAT) algorithm represents the process of neural genesis, where the DAG representations of neural structure are enumerated randomly. In a different direction of research, Generative Adversarial Neural Architecture Search (GA-NAS) challenged the optimality limitations of NAS by interpolating between importance sampling and the generative adversarial process with reinforcement learning flavor. In this research, I propose a neural search strategy that systematically merges pointwise topological mutations with this class of generative adversarial.
+This research targets a class of neural controllers that performs directed searches for neural solutions to Partially Observable Markov Decision Processes (POMDPs). The Wumpus World POMDP is selected as the experimentation subject with a novel modification of allowing the Wumpus to move, which adds the factor of dynamic. The goal is to test a hybrid class of AutoML systems that samples neural agent functions under the constraints of a partially observable and dynamic environment. I implement an approximation of the neurogenesis process in biological brains by merging the DAG mutation scheme with the adversarial differentiation of neural cells.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Description of my version of the Wumpus World POMDP
-The Wumpus world is a 4x4 grid where each location can contain agents, pits, and/or gold. The agents' and objects' locations are randomly generated. During experimentation, we also explore fixed configurations of the environment for inspection of the controller's behavior. 
+## I. BACKGROUND AND PROPOSED METHOD
+The neural network model has been accredited for its capability of learning robust classes of transformations which helps reduce the need for extensive feature engineering. Gradient-Descent on neural parameters has allowed for the development of diverse end-to-end systems without considerable geometric regularizing. Even though this universal approximability has allowed it to span over diverse densities of function classes on the geometric domain, this is conditioned on the arbitrariness of neural representations. Neural Architecture Search (NAS) addresses this by introducing the notion of search strategies in the space of cell connectivity. Among the diverse classes of NAS, the Evolutionary Algorithm has gained popularity for its resemblance to the natural selection process. Particularly, the Neuroevolution of Augmenting Topologies (NEAT) algorithm represents the process where the Directed Acyclic Graph (DAG) representations of neural structure are enumerated randomly (Stanley & Miikkulainen, 2002). In a different direction of research, Generative Adversarial Neural Architecture Search (GA-NAS) challenged the optimality limitations of NAS by interpolating between importance sampling and the generative adversarial process with reinforcement learning flavor (Rezaei, et al., 2021). In this research, I propose a neural search strategy that systematically merges pointwise topological mutations with this class of generative adversarial. Moreover, analogous to the process of neural cells competing in forming strong connections with neighboring cells, this method demonstrates the adversarial and pointwise mutating perspectives in the neurogenesis process in biological brains.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## II. METHOD AND EXPERIMENTAL SETUP
+### 1. THE POMDP
+
+The Wumpus world is a 5x5 grid where each location can contain agents, pits, and/or gold. The agents' and objects' locations are randomly generated. During experimentation, we also explore fixed configurations of the environment for inspection of the controller's behavior.
 The human's PEAS are as follows:
-1. The (not crosswise) neighboring locations to a live wumpus's location have a stench that can be perceived by the human. The (not crosswise) neighboring locations to the pit's location have a stench that can be perceived by the human. In the location of the gold, the human can perceive glitter. When the human walks into the grid's border, it stays still and perceives a bump. When the wumpus is killed, a scream can be perceived by the human regardless of its current location on the grid.
-2. There are actions to turn right, turn left, and go forward which allows the human to traverse the grid. The action grab can be used to pick up the gold. It is only effective if the human is in the same location as the gold. The action shoot can be used to launch an arrow in a straight line in the direction that the human is facing. The arrow can kill the wumpus if it is in the line of flight. The human only has one arrow but the action can be invoked many times, which has no effects if there is no arrow left.
-3. The human gets a massive penalty and the episode terminates if it enters a location containing a pit or a live wumpus. The human gets a massive reward and the episode terminates if it picks up the gold in the gold location. The human also gets minor penalties for each taken action and for bumping into the wall.
 
+•	The (not crosswise) neighboring locations to a live wumpus's location have a stench that can be perceived by the human. The (not crosswise) neighboring locations to the pit's location have a stench that can be perceived by the human. In the location of the gold, the human can perceive glitter. When the human walks into the grid's border, it stays still and perceives a bump. When the wumpus is killed, a scream can be perceived by the human regardless of its current location on the grid.
+
+•	There are actions to turn right, turn left, and go forward which allows the human to traverse the grid. The action grab can be used to pick up the gold. It is only effective if the human is in the same location as the gold. The action shoot can be used to launch an arrow in a straight line in the direction that the human is facing. The arrow can kill the wumpus if it is in the line of flight. The human only has one arrow but the action can be invoked many times, which has no effects if there is no arrow left.
+
+•	The human gets a massive penalty and the episode terminates if it enters a location containing a pit or a live wumpus. The human gets a massive reward and the episode terminates if it picks up the gold in the gold location. The human also gets minor penalties for each taken action and for bumping into the wall.
 Additionally, I have coupled this POMDP design with dynamic and multiagent by adapting the Wumpus's PEAS as follows:
-1. The Wumpus can perceive the human's scent in its current location if a human has traversed over it. The scent has a direction and intensity indicator. As time goes on, the scent intensity will decrease and cease to exist at a point.
-2. There are actions to go right, left, up, and down which allows the Wumpus to traverse the grid.
-3. The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
-The research goal is to have these ANN-based agents exhibit an underlying capabilities of logical reasoning and strategic planning in order to maximize their utilities. That is, the agents should have the capabilities of the following agent types:
-1. Model-based reflex (retain a tractable model of the the PO environment), 
-2. Utility-based (perform rollout searches for the best action plan to maximizes its reward-based objective), 
-3. And Learning (has learnable parameters that can be tuned using experiences).
+•	The Wumpus can perceive the human's scent in its current location if a human has traversed over it. The scent has a direction and intensity indicator. As time goes on, the scent intensity will decrease and cease to exist at a point.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Summary on Accomplishments
+•	There are actions to go right, left, up, and down which allows the Wumpus to traverse the grid.
 
-During the configuration and revising of my research project, I have read numerous research resources in the AI, specifically the Reinforcement Learning, domain to inspect if state-of-the-art theories are compatible with my framework and if they could solve performance roadblocks. This research project has earned me my Capstone graduation from the UIC Honors College. I am currently extending this framework for the Master’s Thesis at my UIC Graduate program.
+•	The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
-•	I have drawn experiences in the evolutionist AI approach from the paper Neural Evolution of Augmenting Topologies (NEAT), and its referenced materials. By randomly mutating and permuting neural structures piecewise, high-performing ANN architectures are discovered. After training, networks leverage their topologically addressable flow-paths and learn hyperplanes of the latent manifolds to aid them during testing episodes. My personal design decision was that all submodules, including LSTM gates, Actor, and Critic networks, share the same architectures but learn independent latent structures. Overall, NEAT contributes the foundation to regulate wide structural priors of neural networks to my research.
+### 2. THE NEAT FRAME
 
-•	I have also extensively familiarized myself with the connectionist AI approach by conducting various independent studies and coursework on Deep Learning. I implement the NEAT apparatus to push deep learners with architectural sparsity constraints to perform generalization on observatory experiences from high dimensional input sensors. Under the deterministic dynamics of the Wumpus World hidden transition model, these parametrized models can locate the global maximum of the objective reward-based function. However, their interpolative faculties are confined to a restricted convex hull of observations drawn from sub-distributions of environmental configurations.
+NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
 
-•	Due to the factorial volume of high-dimensionality sensory inputs drawn from arbitrarily configured environments, my generated models cannot locally interpolate beyond the sparse and rapidly shifting training distribution under fluctuant policies. Therefore, I delve into the idea of leveraging the preservative exploration faculties of deep learners by implementing my version of the Proximal Policy Optimization (PPO) and Intrinsic Curiosity Module (ICM). This contributes immensely to my model's exploration-driven behaviors and stability of learned policies.
+1.	Initialize a primitive population of DAGs with only the frame vertices (input, hidden, and output nodes). The vertices hold the parametrization of neural biases and edges hold the parametrization of neural weights. These components also hold their respective NEAT's innovation identity and Adam optimizer's parameters (Kingma & Ba, 2014). We name the architectural sum of these parts the "genomes" and the neural expressions of them "phenotypes" for the rest of this paper.
 
-•	Due to the intractable search space of piece-wise neural architectures, semi-directional architecture search, such as NEAT, may not always converge. I steer my studies towards adaptive generative models such as the Generative Adversarial Neural Architecture Search. My design decision is to implement GAN controllers that render a directional search and samples gradually towards the optimal distribution of piece-wise mutations. I am currently collaborating this framework onto the NEAT foundation of my research project.
-My plan for this Reinforcement Learning theoretical framework is to leverage a problem's intrinsically interpolative nature. I want to encode the ability for deep models to traverse within the latent manifolds of the problem, sort of like "learning from imagination". Given that each network can produce action for interaction with the MDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we reformulate that each network can act as transitional dynamic predictors. With this formulation, given an initial observation, each network can sample trajectories with this self-played transition model and learn from "imagined" experiences.
+2.	Speciate each non-speciated genome using existing species' representatives and a distance function that considers the disjunctions and protrusions of innovation identities, which are hyperparameters.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## UI/UX Designs
+3.	Optimize the phenotypes in the Wumpus World POMDP to minimize the policy gradient loss which considers a defined reward function.
 
-![Login screen](src/main/resources/images/loginUI.PNG)
+4.	Collect testing scores from the phenotypes and discard phenotypes with scores below a threshold, which is a hyperparameter.
 
-##### Figure 1: This is the login screen of the program. User can specify the Wumpus world size (dimension of the 2D square grid world); number of time steps (each time step is a time unit in a training/testing episode); max population (the number of solution architectures at any generation); and number of training/testing episodes (the number of chances each solution gets to improve itself and get evaluated). 
+5.	Calculate species score as the average of its individuals' scores and terminate species with individual counts below a threshold, which is a hyperparameter.
 
-At a high level, NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
-1. Initialize a primitive population of DAGs with only the frame nodes (input, hidden, and output nodes). The nodes hold the parametrization of neural biases and connections hold the parametrization of neural weights. These components also hold their respective NEAT's innovation identity and Adam optimizer's parameters. We name the architectural sum of these parts "genomes" and the neural expressions of them "phenotypes" for the rest of this paper.
-2. Speciate each non-speciated genome using existing species' representatives and a distance function that considers the disjunctions and protrusions of innovation identities, which are hyperparameters.
-3. Optimize the phenotypes in the Wumpus World POMDP to minimize the policy gradient loss which considers a defined reward function.
-4. Collect testing scores from the phenotypes and discard phenotypes with scores below a threshold, which is a hyperparameter.
-5. Calculate species score as the average of its individuals' scores and terminate species with individual counts below a threshold, which is a hyperparameter.
-6. Let top-performing species reproduce by employing a genetic crossover procedure to produce offsprings that fill in the spot of displaced individuals. Repeat step 2 on event-driven signals.
+6.	Let top-performing species reproduce by employing a genetic crossover procedure to produce offspring that fill in the spot of displaced individuals. This crossover procedure considers the innovation identities of DAG elements (NEAT is successful thanks to this design). Same-species crossover happens with some probability p and cross-species crossover with (1 - p). Offspring's parametrization inherits parents' parametrization with some rate r.
 
-This implementation guarantees that the influx of aborning genomes and discharge of low-performing genomes are maintained and the population count is stable, which supports the efficiency of this implementation. Speciation ensures the retention of diverse DAGs of genomes, thus, defending and optimizing a diverse hypothesis space.
+7.	Mutate the offspring’s DAG using a mutation function. The mutation function should include adding edges and vertices on existing edges. If a vertex C is added on an edge from A to B, the edge from A to B is retained while new edges A to C and C to B are added. This demonstrates the construction of a ResNet architecture (He, Zhang, Ren, & Sun, 2015). Importantly, the mutation function communicates with the mass gene pool so it can record and query innovation identities of newly added edges/vertices. That is, if the edge/vertex is to be added to a genome already existed in the gene pool, that element will use the recorded innovation identity. When a mutation is added to a genome, we also cache the phenotype for optimization convenience.
 
-At the design level of the phenotypes, a Long Short-Term Memory (LSTM) architecture, named the Memory Head, feeds into an Actor-Critic-Seer architecture, named the Decision Head. The Memory Head maps sequences of observations and actions to memory encodings. The Decision Head maps memory encodings to the probabilistic distributions of actions (actor head), a continuous value representing the state-value (critic head), and a continuous tuple representing the prediction of the next observation (seer head). The actor determines the policy that the agent is taking and is trained by maximizing the advantage policy gradient objective. The critic estimates the state's values of observation sequences and is trained by minimizing the Temporal Difference error. This value is used to train the actor, i.e. criticize the current policy. The seer predicts the next observations based on past observation sequences and is trained by minimizing the Mean Squared Error with confirmed observations sampled from the dynamics. This is known as the Intrinsic Curiosity Module for the curiosity-driven exploration of the policy. Conceptually, during training, per end-to-end forward pass from percept history to action distribution, value estimation, and observation prediction, the environment returns reward and the next observation which signals optimization of actor, critic, and seer's parameters. The total gradients of these heads are backpropagated through the Memory Head. While LSTM gates, actor, critic, and seer have their respective sets of parameters and internal states, they all share the same DAG with differences in the output head arrangements due to the fact that each output head functions a distinct specialty.
+8.	Apply random mutations to each genome in the mass population and repeat step 2.
 
-![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+Note: innovation identity upper-bound indirectly effects how many hidden nodes we can have in our architectures, which significantly affect genome’s performances. This number also significantly impacts the computation complexity of our NEAT procedures, especially when incorporated with the GAN REINFORCE agents (more on this later). Therefore, due to the lack of computation resources, we restrict our tuning of this number to within the 0-100 range.
+ 
+Figure 3: A genome’s DAG which demonstrates the structural sparsity of described architectures. The blue region is under Memory Head while the green is under Decision Head. At the leftmost layer, white vertices are observation input head and orange are previous action and state-value input head. At the rightmost region, green vertices are the policy head (actor), orange is the state-value head (critic), and purple is the ICM head (seer). This architecture is generated under an uninformed random mutation function.
 
-##### Figure 2: The NEAT Lab that the user can evolve, reset, view, etc. The ANN being spotlighted on screen is the fittest solution after 100 generations. The blue area is the Memory Head while the green is Decision Head. The input layer consists of observation nodes, inflection nodes, and hidden nodes. At the output layer, the green nodes are the action probability distribution, the orange outputs the state-value estimation, and the violet outputs prediction for the next observation. The architectural information is shown and graphically highlighted when user hovers over a node or connection.
+We define a full loop of procedures from 2 to 8 as a "generation". Therefore, a complete generation consists of top-performing species with each species consisting of surviving genomes. This implementation guarantees that the influx of aborning genomes and discharge of low-performing genomes are maintained, and the population count is stable, which supports the efficiency of this implementation. Speciation ensures the retention of diverse DAGs of genomes, thus, defending and optimizing a diverse hypothesis space.
 
-![Environment Building scene](src/main/resources/images/buildEnvUI.PNG)
+At the design level of the phenotypes, a Long Short-Term Memory (LSTM) architecture, named the Memory Head, feeds into an Actor-Critic-Seer architecture, named the Decision Head (Staudemeyer & Morris, 2019). The Memory Head maps sequences of observations and actions to memory encodings. The Decision Head maps memory encodings to the probabilistic distributions of actions (actor head), a continuous value representing the state-value (critic head), and a continuous tuple representing the prediction of the next observation (seer head). The actor determines the policy that the agent is taking and is trained by maximizing the advantage policy gradient objective. The critic estimates the state's values of observation sequences and is trained by minimizing the Temporal Difference error. This value is used to train the actor in the deep Advantage Actor-Critic (A2C) manner (Volodymyr Mnih, Lillicrap, Harley, Silver, & Kavukcuoglu, 2016). The seer predicts the next observations based on past observation sequences and is trained by minimizing the Mean Squared Error with confirmed observations sampled from the dynamics. This is known as the Intrinsic Curiosity Module (ICM) for the curiosity-driven exploration of the policy (Pathak, Agrawal, Efros, & Darrell, 2017). Conceptually, during training, per end-to-end forward pass from percept history to action distribution, value estimation, and observation prediction, the environment returns reward and the next observation which signals optimization of actor, critic, and seer's parameters. The total gradient receipts of these heads are backpropagated through the Memory Head. While LSTM gates, actor, critic, and seer have their respective sets of parameters and internal states, they all share the same DAG with differences in the output head arrangements because each output head specializes in different tasks.
 
-##### Figure 3: User can build a custom environment as illustrated in this UI during simulation (visualized testing mode) of an individual genome.
+We describe the POMDP and deep A2C framework hyperparameters in the appendix.
 
-During competition between individuals within species in the population, each individual has to go through a user-specified number of training episodes, where parameters are trained, and then get evaluated in a user-specified number of testing episodes where exploration is banned and parameters are not changed. 
-This happens in the background for each evolution step. However, user can view the testing of an individual by clicking on the Simulation button (the top-down second button on the left column). 
-This will take the user to a blueprint environment scene where a world blueprint can be customized via the standard drag-drop UI.
+### 3. THE GENERATIVE ADVERSARIAL SUPERVISORS
 
-![Simulation scene](src/main/resources/images/simUI.PNG)
+On top of the NEAT process are our generative adversarial "supervisors", the mutator, which follows the GAN generator scheme, and the discriminator, which follows the Siamese scheme. They serve as the mutation function in step 7 of the NEAT generation cycle. Instead of applying random vertex and edge mutations to DAGs as in the original NEAT implementation, the mutator regressively samples pointwise mutations and is trained to maximize an expected return in the REINFORCE manner (Kämmerer, 2019). This return considers the validity of sampled pointwise mutations and the approval of the discriminator on the completed DAG. We choose the most fundamental implementation of REINFORCE because, at this level of the project, the computation resource required is extremely expensive. Additionally, we neglect the use of a baseline in REINFORCE by developing a small-valued reward function, a short episodic time horizon, and minimal exploration for the mutator's MDP. The discriminator takes in two DAGs, one sampled from the distribution of top-performing genomes, and one sampled by the mutator. The discriminator will either agree or disagree that the two are being sampled from the same distribution. The discriminator is optimized to minimize the Cross-Entropy Loss between its outputs and the target labels. Consequentially, over time, DAGs sampled by the mutator will be from the distribution of valid and top-performing genomes. One may wonder where we obtain this distribution of genomes to begin discriminator training. Similar to GANAS, we apply a procedure analogous to importance sampling by retaining and updating a pool of top-performing genomes at each generation. In this fashion, we regressively update our approximation of the optimal distribution towards the true optimal distribution of genomes. We allow each species to host a mutator and a discriminator so they can discover and evaluate diverse classes of architectures in the direction of each species. Therefore, for each species, we retain a pool of top-performing genomes within that species.
 
-##### Figure 4: A custom-built simulation scene. The circles on right panes represent the perception channels for the agents in the environment. The listviews below log each agent's action decisions, step-rewards, and Actor-Critic processes. It is observed that the probability distribution of action decision at each time step is uniform and state-value opinion is far off from the Temporal Difference target, this shows that the solution architecure is still simple. 
+We formalize the mutator's MDP as follows:
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Summary on Current Results
+•	The set of actions available for the mutator is choosing the two endpoint vertices from predetermined innovation identities, which is an upper-bound integer. Implicitly, this choice illustrates that if the two vertices are not connected, an edge is formed in between, else, a new vertex is created on the existing edge.
 
-![Environment Design 1](src/main/resources/images/design1.png)
+•	The mutator gets small penalties for invalid choices of vertices. This includes the following scenarios: the two vertices don't exist in the genome, the two vertices form a cycle, the about-to-be-added vertex would exceed the identity upper-bound, the about-to-be-added vertex already exists on the edge between the endpoints. In contrast, the mutator gets small rewards for valid choices. The mutator gets a massive reward or penalty depending on if the final mutated DAG is accepted by the discriminator.
 
-##### Figure 5: We start out with this custom environment to train the neural architectures in.
+•	At the beginning of each episode, each genome in a species is translated into a DAG representation. The rest of the episode consists of the mutator regressively observing the subject DAG, choosing endpoint vertices, and updating the subject DAG for the next time step. If an innovation identity of zero is chosen at any point, the episode terminates. The episode is also terminated if the max number of iterations is reached. If the final mutated DAG is accepted by the discriminator, that DAG will be parsed onto the genome, else, the original genome is retained.
 
-![Environment Design 2](src/main/resources/images/design2.png)
+Note: the mutator can perform actions that involve selecting two endpoints in the range of innovation identities. Each DAG feature and adjacency matrices consider the full range of innovation identities. These two designs raise the computation complexity issue with innovation identity upper-bound significantly. Therefore, future works may consider using DDPG instead of REINFORCE and switching GCN to other GNN methods.
 
-##### Figure 6: After successful convergence among the population on the first design, we switch the environment design to this one.
-
-![Convergence Graph](src/main/resources/images/multimodal.png)
-
-##### Figure 7: The orange line represents the smooth-out max score while the blue line represents the smooth-out population average at each generation. We observe that at first, the population of ANNs slowly obtains higher scores and max out at generation ~800. We then switch the environment to a new one which make their performance crashes steeply. However, overtime, they also learn to do better in this second environment at generation ~2000. We then switch back to the first environment and observe that they still manage to do well in the first one.
-
-We conclude that the neurons in these ANNs have become multimodal. They manage to learn a strategy to win the second environment while still remembering how to solve the first one. 
-When inspecting closer using the simulation functionality, we see that their solutions to the second environment is somewhat similar to their solutions for the first. 
-We hypothesize that because these ANNs are initially "raised" on the first environment, their architectures are deeply influenced by it. 
-Therefore, when moved to a new environment, they try to incorporate what they know from the first to solve this new one.
-
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Generative Adversarial Supervisors
-
-On top of NEAT are our generative adversarial "supervisors", the mutator, which follows the GAN generator scheme, and the discriminator, which follows the Siamese scheme. Instead of applying random vertex and edge mutations to DAGs as in the original NEAT implementation, the mutator regressively samples pointwise mutations and is trained to maximize an expected return. This return considers the validity of sampled pointwise mutations and the approval of the discriminator on the completed DAG. The discriminator takes in two DAGs, one sampled from the distribution of top-performing genomes, and one sampled by the mutator. The discriminator will either agree or disagree that the two are being sampled from the same distribution. The discriminator is optimized to minimize the Cross-Entropy Loss between its outputs and the target labels. Consequentially, over time, DAGs sampled by the mutator will be from the distribution of valid and top-performing genomes. One may wonder where do we obtain this distribution of genomes to begin discriminator training. Similar to GANAS, we apply a procedure analogous to importance sampling by retaining and updating a pool of top-performing genomes at each generation. In this fashion, we regressively update our approximation of the optimal distribution towards the true optimal distribution of genomes. We allow each species to host a mutator and a discriminator so they can discover and evaluate diverse classes of architectures in the direction of each species. Therefore, for each species, we retain a pool of top-performing genomes within that species. We briefly describe the mutator's MDP as follows:
-- The set of actions available for the mutator is choosing the two endpoint vertices from predetermined innovation identities, which is an upper-bound integer. Implicitly, this choice illustrates that if the two vertices are not connected, an edge is formed in between, else, a new vertex is created on the existing edge. 
-- The mutator gets small penalties for invalid choices of vertices. This includes the following scenarios: the two vertices don't exist in the genome, the two vertices form a cycle, the about-to-be-added vertex would exceed the upper-bound identity number, the about-to-be-added vertex already exists on the edge between the endpoints. In contrast, the mutator gets small rewards for valid choices. The mutator gets a massive reward or penalty depending on if the final mutated DAG is accepted by the discriminator.
-- At the beginning of each episode, each genome in a species is translated into a DAG representation. The rest of the episode consists of the mutator regressively observing the subject DAG, choosing endpoint vertices, and updating the subject DAG for the next time step. If an innovation identity of zero is chosen at any point, the episode terminates. The episode is also terminated if the max number of iterations is reached. If the final mutated DAG is accepted by the discriminator, that DAG will be parsed onto the genome, else, the original genome is retained.
-
-The architecture of the mutator consists of three components: the Graph Convolution Network (GCN) layer that reads and encodes the input DAG, the latent Gated Recurrent Unit (GRU) that memorizes the sequence of observations, and the densely connected layer consisting of two output heads that choose the endpoint vertices.
+The architecture of the mutator consists of three components: the Graph Convolution Network (GCN) layer (Kipf & Welling, 2017) that reads and encodes the input DAG, the latent Gated Recurrent Unit (GRU) layer (Chung, Gulcehre, Cho, & Bengio, 2014) that memorizes the sequence of observations, and the densely connected MLP layer (Peng, 2017) consisting of two output heads that choose the endpoint vertices.
 
 The architecture of the discriminator consists of two components: the Graph Convolution Network (GCN) layer consisting of two input heads that read and encode two DAGs (one sampled from the true distribution and the other from the mutator's distribution), and the densely connected layer that chooses between accepting or declining that the two DAG are from the same distribution.
 
-We observe a challenge. Because NEAT initializes a uniform primitive population, the pool of top-performing genomes may never be updated which stagnates the learning procedures of the two supervisors. To avoid this, we initialize a global mutator that samples random mutations and is never optimized. For the first few generations, we run this mutator on each genome in the population in parallel with the process of each species' supervisors optimizing their respective genomes. With this random process, we jump-start speciation and the optimization of each species' supervisors.
+We observe a challenge. Because NEAT initializes a uniform primitive population, the pool of top-performing genomes may never be updated, which stagnates the learning procedures of the two supervisors. To avoid this, we initialize a global mutator that samples random mutations and is never optimized. For the first few generations, we run this mutator on each genome in the population in parallel with the process of each species' supervisors optimizing their respective genomes. With this random process, we jump-start speciation and the optimization of each species' supervisors.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Preferences
-Stanley, K. (n.d.). Evolving Neural Networks through Augmenting Topologies. The MIT Press Journals - Neural Network Research Group. Retrieved January 13, 2022, from http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf 
+## III. RESULTS AND ABLATION STUDIES
+### 1. NEAT WITH MANUALLY TUNED RANDOM MUTATION
 
-Staudemeyer, R. C., & Morris, E. R. (2019, September 12). Understanding LSTM -- a tutorial into long short-term memory recurrent neural networks. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/1909.09586 
+We study the case where our implementation of NEAT is used alone with random pointwise mutations on the population of genome's DAGs. That is, the generative adversarial supervisors are ablated. We tune NEAT’s mutation parameters manually and describe the most optimal set in the appendix.
 
-Mnih, V., Badia, A. P., Mirza, M., Graves, A., Lillicrap, T. P., Harley, T., Silver, D., & Kavukcuoglu, K. (2016, June 16). Asynchronous methods for deep reinforcement learning. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/1602.01783 
+We begin with fixating an environment configuration to study the convergence properties of applying the A2C method to neural agents under the constraint of sparsity. Around generation 800, we observe that the agents consistently reach the highest possible score (~700) in this environment configuration while retaining sparse connectivity architectures. To test the robustness of our method, we steeply change the configuration of the environment. As expected, the agent's score crashes due to the unfamiliar terrains. However, around 1000 generations later, we observe that the agents reach the highest possible score in this new configuration. Remarkably, when we continually switch the configuration back and forth, some agents still manage to perform optimally. That is, there exist architectures that can generalize and effectively interpolate a compromised policy for both environments. As we observe their behaviors in the two environments, their strategies closely resemble each other. For example, the action of turning left in some states in the first environment yields maximal returns. In the second one, even though turning right in some states yields maximal returns, the agents choose to turn left until their resulting orientation is similar to a single right turn. We hypothesize that the initial environment deeply influences the agent's architecture and policy expression as they “grow” up, so they lose the capability of turning right even when their architectures become more complex.
+ 
+Figure 4: Score progression in NEAT with manually tuned random mutation, a population size of 1000, and “fixed-changed” configured environments. The orange lines represent the maximum score achieved in each generation while the blue/green lines represent the average score with respect to the whole population. We observe that the mass population can catch up exponentially with the global maximal score once a stable optimal policy is discovered by some agents. This demonstrates a good convergence quality of the NEAT process. The first steep decline around generation 800 is due to a change in environment configuration. The second steep decline around generation 2000 is due to another change in environment configuration. We see that in both cases, the population can bring their score performance back up quickly.
 
-Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O. (2017, August 28). Proximal policy optimization algorithms. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/1707.06347 
+We run this ablated controller on randomly configured environments and observe that the agent's policies converge to a local maximum (~300) of staying immobile. These randomly sampled architectures are not robust enough to allow better exploration on randomly sampled terrains. That is, positive rewards are highly sparse in this hostile Wumpus World, and sampled agents cannot develop adequate policies to handle the partial-observability and dynamic nature of the given task.
 
-Pathak, D., Agrawal, P., Efros, A. A., & Darrell, T. (2017, May 15). Curiosity-driven exploration by self-supervised prediction. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/1705.05363 
+When running more generations from the initial maximal score generation, we observe that the genome’s architectures become more complex even though further score improvements are impossible. This can be mitigated with an adaptive mutation function that considers the relationship between an architecture with its performance and help us regularize architectural complexity.
 
-Rezaei, S. S. C., Han, F. X., Niu, D., Salameh, M., Mills, K., Lian, S., Lu, W., & Jui, S. (2021, June 23). Generative Adversarial Neural Architecture Search. arXiv.org. Retrieved January 13, 2022, from https://arxiv.org/abs/2105.09356 
+### 2. NEAT WITH ADAPTIVE SUPERVISORS
+
+With the addition of the RL generative adversarial controllers, the computation complexity of our research is explosive. Therefore, we introduce minor regularization to the scoring functions to speed up policy convergence of the mutators and phenotypes. Consequentially, the score scale of the human agent will appear lower in later figures. We also decrease the population size down to 100 to minimize speciation explosion which creates too many supervisors to optimize and overflow the memory. Like NEAT, we tune the mutator’s MDP hyperparameters manually and describe the most optimal set in the appendix.
+
+Prospectively, with our method, as the supervisor's losses decrease, the sampled DAGs diversify greatly over the course of the first few generations.
+ 
+Figure 5: We see that the population diversifies into 6 different species in a few starting generations. Over the course of more generations, the number of species reach equilibrium at 4, i.e., four successful species concurrently exist for the rest of this trial.
+
+Interestingly, when observing the behaviors of each species' mutator, we see that for successful species, i.e., species with architectures favored by its discriminator, the mutators sample mutations until maximum time horizon termination. In contrast, in non-successful species, their mutators tend to terminate the sampling process early. This is apparent as sampling more would result in the discriminator's rejection anyways. The mutators understand the optimal directions of architecture sampling while giving up on unproductive architectures.
+
+We use the configuration fixation experiment used in part 1 and observe that the agents reach global maximum at a significantly faster rate even though the population size is significantly decreased.  
+ 
+Figure 6: Under the control of GAN supervisors, a population size of 100, and a fixed-configured environment, score converges towards global optimum (~0.7) in merely 200 generations.
+
+We also observe that when running more generations from the initial maximal score generation, the pool of top-performing genomes stops changing. This results in the mutators stop sampling new mutations and the discriminator’s judgements become approximately indifferent (~50-50). That is, they are in a deadlock position. We conclude that this adaptive mutation framework implicitly understands the relationship between a DAG structure with its phenotype’s performance.
+
+In the condition of arbitrarily configured environments, i.e., the full POMDP, the score fluctuates constantly. However, learned policies are adaptive enough to consistently achieve maximal score (~0.7) in many arbitrarily configured environments.
+ 
+Figure 7: Under the control of GAN supervisors, a population size of 100, and arbitrarily configured environments, score fluctuations occur instead of convergence towards local optimum (~0.2) discovered by NEAT without the supervisors. This is a good quality for convergence as the supervisors are actively steering score progression out of local performance traps.
+
+## IV. CONCLUSION
+During the configuration and revising of this research project, I have reviewed numerous resources in the Reinforcement Learning literature to inspect if state-of-the-art theories are compatible with my framework and if they could solve performance roadblocks:
+
+• In the evolutionist AI approach, I examine the NEAT algorithm. By randomly mutating/permuting DAG structures piecewise, high-performing neural network architectures are discovered. After training, networks leverage their topologically addressable flow paths to optimize an objective function. My personal design decision was that all submodules, including LSTM gates, Actor, and Critic networks, share the same DAG but learn independent latent structures. Overall, NEAT contributes the foundation to regulate diverse structural priors of neural architectures to this research.
+
+• I have also extensively experimented with the connectionist AI approach, i.e., deep learning. I implement the NEAT apparatus to demonstrate deep neural networks under connective sparsity constraints can perform generalization on observatory experiences from high dimensional input sensors. Under the deterministic dynamics of the Wumpus World transition model, the models achieve the global maximum of the objective reward-based function. However, their interpolative faculties are confined to a restricted convex hull of observations drawn from sub-distributions of environmental configurations.
+
+• Due to the factorial volume of high-dimensionality sensory inputs drawn from arbitrarily configured environments, randomly sampled models cannot locally interpolate beyond the sparse and rapidly shifting training distribution. Therefore, I delve into the idea of leveraging the policy-preservative and exploration faculties of the model-based A2C method by implementing clipped gradient, normalized reward function, and the ICM. This contributes immensely to my model's exploration-driven behaviors and stability of learned policies.
+
+• Due to the intractable search space of pointwise DAG mutations, exhaustive (and semi-directional due to the eviction step) architecture search, NEAT, is computationally expensive and may not always converge. I steer my studies towards adaptive generative AutoML models, the GANAS framework, which approaches the unsupervised problem with an RL solution. That is, I implement GAN controllers as REINFORCE agents who render a directional search, samples towards the optimal distribution of piece-wise DAG mutations, and contextualizes the relationships between architectures and their neural performances. 
+
+For future work, we can leverage the ensemble and model-based natures of this framework by encoding the ability for deep models to learn from imagined rollouts and act as targets for each other's training. In brief, given that learners sample action for interaction with the POMDP's transition model, predict state value for learning, and predict subsequence observations via ICM, we can formalize the process of each learner acting as the other's target transition model. This can result in further optimization stability and trajectory sampling efficiency.
+
+## V. APPENDIX
+### Deep A2C hyperparameters
+- number of training episodes	3
+- number of testing episodes	2
+- grid world dimension	5
+- episodic time horizon	20
+- discount factor	0.98
+- lambda in TD-lambda	0.92
+- Adam initial learning rate	1e-3
+
+### POMDP reward function
+- agent bumps into wall	-0.005
+- agent performs an action	-0.001
+- agent got the gold	0.7
+- agent grabs but miss the gold	-0.01
+- agent dies	-0.05
+- agent shoots an arrow	-0.005
+
+### NEAT hyperparameters
+- genomic distance: excess weight	1.6
+- genomic distance: disjoint weight	1.8
+- same species distance threshold	2
+- eviction rate at each generation	0.2
+- species extinction individual count threshold	5
+- parameter’s inheritance rate	0.6
+- upper-bound innovation identity	32
+- population size	100-200
+
+### GAN framework hyperparameters
+- size of top-performing individual pool	3
+- encoding dimension	16
+- training epochs at each generation	5
+- max episodic time horizon per epoch	10
+- discount factor	0.99
+- exploration rate	0.5
+- exploration decay rate	0.5
+- exploration rate lower-bound	0.01
+- number of random-mutation generations	50
+- number of mutations per random-mutation	1
+
+### Mutator reward function
+- sample an invalid mutation	-0.05
+- sample a valid mutation	0.1
+- sample add node mutation but max reached	-0.05
+- sample add node mutation but already exists	-0.05
+- discriminator accepts resulting DAG	0.2
+- discriminator rejects resulting DAG	-0.1
+
+## Acknowledgments
+I thank Professor Piotr Gmytrasiewicz and Professor Ian Kash for assistance and advice on the AI-Reinforcement Learning literature.
+
+## References
+Chung, J., Gulcehre, C., Cho, K., & Bengio, Y. (2014). Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling. Retrieved from https://arxiv.org/abs/1412.3555
+
+He, K., Zhang, X., Ren, S., & Sun, J. (2015). Deep Residual Learning for Image Recognition. Retrieved from https://arxiv.org/abs/1512.03385
+
+Kämmerer, M. M. (2019). On Policy Gradients. Retrieved from https://arxiv.org/abs/1911.04817
+
+Kingma, D. P., & Ba, J. (2014). Adam: A Method for Stochastic Optimization. Retrieved from https://arxiv.org/abs/1412.6980
+
+Kipf, T. N., & Welling, M. (2017). Semi-Supervised Classification with Graph Convolutional Networks. Retrieved from https://arxiv.org/abs/1609.02907
+
+Pathak, D., Agrawal, P., Efros, A. A., & Darrell, T. (2017). Curiosity-driven Exploration by Self-supervised Prediction. Retrieved from https://arxiv.org/abs/1705.05363
+
+Peng, Z. (2017). Multilayer Perceptron Algebra. Retrieved from https://arxiv.org/abs/1701.04968
+
+Rezaei, S. S., Han, F. X., Niu, D., Salameh, M., Mills, K., Lian, S., . . . Jui, S. (2021). Generative Adversarial Neural Architecture Search. Retrieved from https://arxiv.org/abs/2105.09356
+
+Stanley, K. O., & Miikkulainen, R. (2002). Evolving Neural Networks through Augmenting Topologies. Retrieved from The MIT Press Journals: http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
+
+Staudemeyer, R. C., & Morris, E. R. (2019). Understanding LSTM -- a tutorial into Long Short-Term Memory Recurrent Neural Networks. Retrieved from https://arxiv.org/abs/1909.09586
+
+Volodymyr Mnih, A. P., Lillicrap, T. P., Harley, T., Silver, D., & Kavukcuoglu, K. (2016). Asynchronous Methods for Deep Reinforcement Learning. Retrieved from https://arxiv.org/abs/1602.01783
+
+
+![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+
