@@ -30,7 +30,13 @@ Additionally, I have coupled this POMDP design with dynamic and multiagent by ad
 
 •	The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
+![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+Figure 1: A graphical representation of the described POMDP. The human is at (1, 1) and Wumpus at (1, 3). 
+
 ### 2. THE NEAT FRAME
+ 
+![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+Figure 2: A graphical representation of the species tree. Species -1 represents the initial point of the un-speciated population. Green vertices represent existing species while red represent extinct species. “Directed” (top-down direction) edges {A, B} represents the fact that species B originates from species A.
 
 NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
 
