@@ -30,12 +30,12 @@ Additionally, I have coupled this POMDP design with dynamic and multiagent by ad
 
 •	The Wumpus gets a massive penalty if the human wins the game or if it is killed by the human's arrow. The Wumpus gets a massive reward if it kills the human by co-locating itself with the human's location.
 
-![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+<center>![NEAT Lab scene](src/main/resources/images/Picture1.PNG)</center>
 Figure 1: A graphical representation of the described POMDP. The human is at (1, 1) and Wumpus at (1, 3). 
 
 ### 2. THE NEAT FRAME
  
-![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+![NEAT Lab scene](src/main/resources/images/Picture2.PNG)
 Figure 2: A graphical representation of the species tree. Species -1 represents the initial point of the un-speciated population. Green vertices represent existing species while red represent extinct species. “Directed” (top-down direction) edges {A, B} represents the fact that species B originates from species A.
 
 NEAT is implemented as a control for the nondeterministic production of DAGs. My version of NEAT implementation is as follow:
@@ -58,7 +58,7 @@ NEAT is implemented as a control for the nondeterministic production of DAGs. My
 
 Note: innovation identity upper-bound indirectly effects how many hidden nodes we can have in our architectures, which significantly affect genome’s performances. This number also significantly impacts the computation complexity of our NEAT procedures, especially when incorporated with the GAN REINFORCE agents (more on this later). Therefore, due to the lack of computation resources, we restrict our tuning of this number to within the 0-100 range.
  
- ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+ ![NEAT Lab scene](src/main/resources/images/Picture3.PNG)
 Figure 3: A genome’s DAG which demonstrates the structural sparsity of described architectures. The blue region is under Memory Head while the green is under Decision Head. At the leftmost layer, white vertices are observation input head and orange are previous action and state-value input head. At the rightmost region, green vertices are the policy head (actor), orange is the state-value head (critic), and purple is the ICM head (seer). This architecture is generated under an uninformed random mutation function.
 
 We define a full loop of procedures from 2 to 8 as a "generation". Therefore, a complete generation consists of top-performing species with each species consisting of surviving genomes. This implementation guarantees that the influx of aborning genomes and discharge of low-performing genomes are maintained, and the population count is stable, which supports the efficiency of this implementation. Speciation ensures the retention of diverse DAGs of genomes, thus, defending and optimizing a diverse hypothesis space.
@@ -95,7 +95,7 @@ We study the case where our implementation of NEAT is used alone with random poi
 
 We begin with fixating an environment configuration to study the convergence properties of applying the A2C method to neural agents under the constraint of sparsity. Around generation 800, we observe that the agents consistently reach the highest possible score (~700) in this environment configuration while retaining sparse connectivity architectures. To test the robustness of our method, we steeply change the configuration of the environment. As expected, the agent's score crashes due to the unfamiliar terrains. However, around 1000 generations later, we observe that the agents reach the highest possible score in this new configuration. Remarkably, when we continually switch the configuration back and forth, some agents still manage to perform optimally. That is, there exist architectures that can generalize and effectively interpolate a compromised policy for both environments. As we observe their behaviors in the two environments, their strategies closely resemble each other. For example, the action of turning left in some states in the first environment yields maximal returns. In the second one, even though turning right in some states yields maximal returns, the agents choose to turn left until their resulting orientation is similar to a single right turn. We hypothesize that the initial environment deeply influences the agent's architecture and policy expression as they “grow” up, so they lose the capability of turning right even when their architectures become more complex.
  
- ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+ ![NEAT Lab scene](src/main/resources/images/Picture4.PNG)
 Figure 4: Score progression in NEAT with manually tuned random mutation, a population size of 1000, and “fixed-changed” configured environments. The orange lines represent the maximum score achieved in each generation while the blue/green lines represent the average score with respect to the whole population. We observe that the mass population can catch up exponentially with the global maximal score once a stable optimal policy is discovered by some agents. This demonstrates a good convergence quality of the NEAT process. The first steep decline around generation 800 is due to a change in environment configuration. The second steep decline around generation 2000 is due to another change in environment configuration. We see that in both cases, the population can bring their score performance back up quickly.
 
 We run this ablated controller on randomly configured environments and observe that the agent's policies converge to a local maximum (~300) of staying immobile. These randomly sampled architectures are not robust enough to allow better exploration on randomly sampled terrains. That is, positive rewards are highly sparse in this hostile Wumpus World, and sampled agents cannot develop adequate policies to handle the partial-observability and dynamic nature of the given task.
@@ -108,21 +108,21 @@ With the addition of the RL generative adversarial controllers, the computation 
 
 Prospectively, with our method, as the supervisor's losses decrease, the sampled DAGs diversify greatly over the course of the first few generations.
  
- ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+![NEAT Lab scene](src/main/resources/images/Picture5.PNG)
 Figure 5: We see that the population diversifies into 6 different species in a few starting generations. Over the course of more generations, the number of species reach equilibrium at 4, i.e., four successful species concurrently exist for the rest of this trial.
 
 Interestingly, when observing the behaviors of each species' mutator, we see that for successful species, i.e., species with architectures favored by its discriminator, the mutators sample mutations until maximum time horizon termination. In contrast, in non-successful species, their mutators tend to terminate the sampling process early. This is apparent as sampling more would result in the discriminator's rejection anyways. The mutators understand the optimal directions of architecture sampling while giving up on unproductive architectures.
 
 We use the configuration fixation experiment used in part 1 and observe that the agents reach global maximum at a significantly faster rate even though the population size is significantly decreased.  
  
- ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+![NEAT Lab scene](src/main/resources/images/Picture6.PNG)
 Figure 6: Under the control of GAN supervisors, a population size of 100, and a fixed-configured environment, score converges towards global optimum (~0.7) in merely 200 generations.
 
 We also observe that when running more generations from the initial maximal score generation, the pool of top-performing genomes stops changing. This results in the mutators stop sampling new mutations and the discriminator’s judgements become approximately indifferent (~50-50). That is, they are in a deadlock position. We conclude that this adaptive mutation framework implicitly understands the relationship between a DAG structure with its phenotype’s performance.
 
 In the condition of arbitrarily configured environments, i.e., the full POMDP, the score fluctuates constantly. However, learned policies are adaptive enough to consistently achieve maximal score (~0.7) in many arbitrarily configured environments.
  
- ![NEAT Lab scene](src/main/resources/images/labUI.PNG)
+![NEAT Lab scene](src/main/resources/images/Picture7.PNG)
 Figure 7: Under the control of GAN supervisors, a population size of 100, and arbitrarily configured environments, score fluctuations occur instead of convergence towards local optimum (~0.2) discovered by NEAT without the supervisors. This is a good quality for convergence as the supervisors are actively steering score progression out of local performance traps.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
