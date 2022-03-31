@@ -1,7 +1,5 @@
 # Generative Adversarial in Augmenting Mutation-Evolution
-### Author: Truong Nguyen Huy
-#### Computer Science - Software Engineering
-##### @ University of Illinois at Chicago
+### Author: Truong Nguyen Huy - Computer Science - Software Engineering @ University of Illinois at Chicago
 
 ## Abstract
 
