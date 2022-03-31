@@ -12,13 +12,13 @@ public class MHcg extends ConGene {
 
     public MHcg(NodeGene fG, NodeGene tG) {
         super(fG, tG);
-        randomWeights();
+        randomWeights(0); // new random parameters
     }
 
-    public void randomWeights() {
-        actorWeightTuple = new GateTuple();
-        criticWeightTuple = new GateTuple();
-        seerWeightTuple = new GateTuple();
+    public void randomWeights(double p) {
+        actorWeightTuple = new GateTuple(actorWeightTuple, p);
+        criticWeightTuple = new GateTuple(criticWeightTuple, p);
+        seerWeightTuple = new GateTuple(seerWeightTuple, p);
     }
 
     public MHcg(NodeGene fG, NodeGene tG, char proxy) {

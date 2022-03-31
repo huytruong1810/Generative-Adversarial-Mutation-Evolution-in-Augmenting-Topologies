@@ -8,7 +8,7 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.Pane?>
 <HBox fx:id="RootBox" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Environment.Controllers.NEATController">
+      fx:controller="RL.Controllers.NEATController">
 
     <VBox fx:id="ControlPanel">
         <VBox alignment="CENTER">
@@ -29,7 +29,7 @@
             <HBox>
                 <Button fx:id="buildEnvBtn" onAction="#buildEnv">
                     <tooltip>
-                        <Tooltip text="Build Environment (TAB)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
+                        <Tooltip text="Build RL (TAB)" showDelay="700ms" showDuration="2000ms" hideDelay="0ms" />
                     </tooltip>
                 </Button>
                 <Button fx:id="uploadBtn" onAction="#upload">

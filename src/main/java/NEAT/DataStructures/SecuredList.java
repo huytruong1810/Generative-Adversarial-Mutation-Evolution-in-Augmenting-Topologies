@@ -8,8 +8,8 @@ import java.util.List;
 
 public class SecuredList<T> {
 
-    HashSet<T> set; // supports efficient gene look up
-    List<T> data; // supports gene ordered retrieval
+    private final HashSet<T> set; // supports efficient gene look up
+    private final List<T> data; // supports gene ordered retrieval
 
     public SecuredList() {
         set = new HashSet<>();

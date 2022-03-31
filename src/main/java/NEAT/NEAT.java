@@ -1,6 +1,7 @@
 package NEAT;
 
-import Environment.Controllers.Utils;
+import GANAS.GAN;
+import RL.Controllers.Utils;
 import NEAT.DataStructures.AncestorTree;
 import NEAT.DataStructures.SecuredList;
 import NEAT.DataStructures.Ranker;
@@ -24,10 +25,10 @@ public class NEAT {
     /**-----------------------------------------------------------------------------------------------------------------
      * NEAT hyper-parameters
      */
-    public static int numTrEps, numTeEps, worldDim, timeHorizon;
+    public static int numTrEps = 3, numTeEps = 2, worldDim = 5, timeHorizon = 20; // default values
     public static int[] obsII, infII, actorOI, criticOI, seerOI;
     public static char[][][] bluePrint;
-    public static final int NULL_SPECIES = -1, IMPOSSIBLE_VAL = (int) Double.NEGATIVE_INFINITY;
+    public static final int NULL_SPECIES = -1, IMPOSSIBLE_VAL = (int) Double.NEGATIVE_INFINITY, MAX_RAND_MUTATE = 50;
     public static final double inputNodeX = 15, outputNodeX = 1325, hiddenNodeX = (inputNodeX + outputNodeX) / 2,
 
                                GAMMA = 0.98, // discount factor in reward aggregation, 0.0 (immediate reward) - 1.0 (planing)
@@ -36,14 +37,16 @@ public class NEAT {
                                C1 = 1.6, C2 = 1.8, // genomic distance const: excess and disjoint
                                compThres = 2, // max distance to be consider the same species
                                evictRate = 0.2, // percentage of eviction from the population
-                               extinctThres = 5; // minimum number of individuals to maintain a species existence
+                               extinctThres = 15, // minimum number of individuals to maintain a species existence
+                               inheritRate = 0.6; // rate for parameters to be inherited
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * NEAT ancestry archive
+     * NEAT submodules
      */
     private static GenePool genePool;
     private static Incubator incubator;
-    private static Mutator mutator;
+    private static GAN randomMutator;
+    private static int mutateCount = 0;
 
     private static SecuredList<Individual> generalPopulation;
     private static SecuredList<Species> ecosystem;
@@ -87,6 +90,12 @@ public class NEAT {
                              int[] actorIndices, int[] criticIndices, int[] seerIndices,
                              int maxPop, int trEps, int teEps) {
 
+        if (observationIndices.length + inflectionIndices.length + numHidden * 2 > MAX_NODE)
+            throw new IllegalStateException("Memory head contains a number of base nodes greater than maximum allowed");
+
+        if (numHidden + actorIndices.length + criticIndices.length + seerIndices.length > MAX_NODE)
+            throw new IllegalStateException("Decision head contains a number of base nodes greater than maximum allowed");
+
         worldDim = worldSize;
         timeHorizon = timeSteps;
 
@@ -98,7 +107,7 @@ public class NEAT {
 
         genePool = new GenePool();
         incubator = new Incubator();
-        mutator = new Mutator(genePool);
+        randomMutator = new GAN(genePool);
 
         generalPopulation = new SecuredList<>();
         ecosystem = new SecuredList<>();
@@ -131,46 +140,48 @@ public class NEAT {
         ecosystem.clear();
         generalPopulation.clear();
 
-        int inputN = numInput + numHidden;
+        int inputDim = numInput + numHidden;
 
         // set up common ancestries (the input-hidden-output frame)
         // we ignore the returned node here
-        for (int i = 0; i < inputN; ++i) {
-            double y = initY.apply(i, inputN);
+        // IN = -1 to let gene pool initialize these roots and log them
+        for (int i = 0; i < inputDim; ++i) {
+            double y = initY.apply(i, inputDim);
             if (contains(obsII, i)) OBS_NODES_Y.add(y);
             else if (contains(infII, i)) INF_NODES_Y.add(y);
-            genePool.logNode(-1, inputNodeX, y, NodeType.MRU, true); // MRU: 1..(inN + hidN)  innovation record
+            // 1..(inN + hidN)  IN record
+            genePool.logNode(-1, null, inputNodeX, y, NodeType.MH, true);
         }
         for (int i = 0; i < numHidden; ++i) {
             double y = initY.apply(i, numHidden);
-            genePool.logNode(-1, hiddenNodeX, y, NodeType.MRU, true); // MRU: (inN + hidN + 1)..(inN + 2 * hidN) innovation record
-            genePool.logNode(-1, hiddenNodeX, y, NodeType.ACU, true); // ACU: 1..hidN innovation record
+            // (inN + hidN + 1)..(inN + 2 x hidN) IN record
+            genePool.logNode(-1, null, hiddenNodeX, y, NodeType.MH, true);
+            // 1..hidN IN record
+            genePool.logNode(-1, null, hiddenNodeX, y, NodeType.DH, true);
         }
         for (int i = 0; i < numOutput; ++i) {
             double y = initY.apply(i, numOutput);
             if (contains(criticOI, i)) CRITIC_NODES_Y.add(y);
             else if (contains(seerOI, i)) SEER_NODES_Y.add(y);
-            genePool.logNode(-1, outputNodeX, y, NodeType.ACU, true); // ACU: (hidN + 1)..(hidN + outN) innovation record
+            // (hidN + 1)..(hidN + outN) IN record
+            genePool.logNode(-1, null, outputNodeX, y, NodeType.DH, true);
         }
 
         // initial population
         for (int i = 0; i < maxPop; ++i) {
-
-            MHg mru = new MHg(inputN, numHidden);
+            MHg mru = new MHg(inputDim, numHidden);
             DHg acu = new DHg(numHidden, numOutput);
-
             SecuredList<MHng> mrunodes = mru.getNodes();
             SecuredList<DHng> acunodes = acu.getNodes();
-
-            // build base frame by inserting base ancestors
-            for (int j = 0; j < (inputN + numHidden); ++j) mrunodes.add((MHng) genePool.logNode(j, 0, 0, NodeType.MRU, true));
-            for (int j = 0; j < (numHidden + numOutput); ++j) acunodes.add((DHng) genePool.logNode(j, 0, 0, NodeType.ACU, true));
-
+            // build base frame by sequentially retrieving base nodes from gene pool, IN starts at 1
+            // this is retrieving so no need to provide x and y coordinates
+            for (int IN = 1, maxIN = inputDim + numHidden + 1; IN < maxIN; ++IN) mrunodes.add((MHng)
+                    genePool.logNode(IN, null, 0, 0, NodeType.MH, true));
+            for (int IN = 1, maxIN = numHidden + numOutput + 1; IN < maxIN; ++IN) acunodes.add((DHng)
+                    genePool.logNode(IN, null, 0, 0, NodeType.DH, true));
             Individual individual = new Individual(mru, acu);
             individual.express(); // express the initial genomes
-
             generalPopulation.add(individual); // none have a species yet
-
         }
 
     }
@@ -197,10 +208,10 @@ public class NEAT {
                     if (compScore < bestComp) { bestComp = compScore; bestFit = s; }
                 }
             }
-            if (bestComp < compThres) bestFit.recruit(i);
+            if (bestComp < compThres) bestFit.add(i);
             else { // no good fit, branch new species
                 Species p = i.getParentSpecies(); // this new species deviates from the original one
-                Species newSpecies = new Species(i, (p != null) ? p.getID() : NULL_SPECIES);
+                Species newSpecies = new Species(i, (p != null) ? p.getID() : NULL_SPECIES, genePool);
                 ecosystem.add(newSpecies);
                 try { // ancestor tree does cloning of representative to save structural changes
                     ancestorTree.add(p, newSpecies);
@@ -211,11 +222,8 @@ public class NEAT {
             }
         }
 
-        // species regulation
-
         // sample a backup blueprint in case the universal blueprint is null (random mode)
         char[][][] backupBlueprint = Utils.makeBlueprint(5, true, true, 2, 1, null, null);
-
         Ranker<Species> ranker = new Ranker<>();
         for (int i = 0, n = ecosystem.size(); i < n; ++i) {
             Species s = ecosystem.get(i);
@@ -239,10 +247,20 @@ public class NEAT {
                 Species s2 = ranker.bestRandom(); // could be same as s1 so asexual reproduction
                 i.replaceWith(incubator.crossBreed(s1.getChampion(), s2.getChampion()));
                 i.setParentSpecies(s1);
-                mutator.mutateStructure(i);
-                i.express(); // express the individual once after its birth due to structural mutation
+                s1.mutate(i); // note that population of s1 has already been sorted by evict invocation
+                // child inherits parent's parameters at a rate
+                i.getMH().randomParams(inheritRate);
+                i.getDH().randomParams(inheritRate);
+                i.express();
+            } else { // random-mutate alive individuals
+                if (mutateCount < MAX_RAND_MUTATE) {
+                    randomMutator.forceMutate(i, 1, true);
+                    randomMutator.forceMutate(i, 1, false);
+                    i.express();
+                }
             }
         } // newborn individuals are species-unassigned [alive]
+        mutateCount++;
 
     } // after this step, a bunch of individuals will have no species, they are the newborns
 

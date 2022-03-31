@@ -38,8 +38,8 @@ public class Incubator {
         }
 
         // p1 gets the privilege
-        MHg p1_mru = p1.getMRU();
-        DHg p1_acu = p1.getACU();
+        MHg p1_mru = p1.getMH();
+        DHg p1_acu = p1.getDH();
 
         // build child's architecture, in this version, all parent params are passed down to child
 
@@ -58,7 +58,7 @@ public class Incubator {
         for (int i = 0; i < (inputN + hiddenN); ++i) mru_nodes.add(p1_mrun.get(i).clone());
         for (int i = 0; i < (hiddenN + outputN); ++i) acu_nodes.add(p1_acun.get(i).clone());
 
-        for (MHcg c : collectMRURefs(p1_mru, p2.getMRU())) {
+        for (MHcg c : collectMRURefs(p1_mru, p2.getMH())) { // sequential iteration so connections stay in order
 
             // basing on innovation number of proxy
             MHng n1 = new MHng(c.getFG());
@@ -76,7 +76,7 @@ public class Incubator {
 
         }
 
-        for (DHcg c : collectACURefs(p1_acu, p2.getACU())) {
+        for (DHcg c : collectACURefs(p1_acu, p2.getDH())) { // sequential iteration so connections stay in order
 
             DHng n1 = new DHng(c.getFG());
             if (acu_nodes.contains(n1)) n1 = acu_nodes.get(n1);
@@ -89,7 +89,7 @@ public class Incubator {
             DHcg childCon = c.redirectClone(n1, n2); // con trained params are passed down
 
             n2.addInCons(childCon);
-            acu_cons.add(childCon);
+            acu_cons.add(childCon); // parents already have their connections in order
 
         }
 

@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.control.ListView?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Environment.Controllers.SimulationController">
+      fx:controller="RL.Controllers.SimulationController">
 
     <HBox fx:id="MenuBox" alignment="CENTER">
         <Button text="Exit" onAction="#exit" />
@@ -30,7 +30,7 @@
         </StackPane>
 
         <VBox>
-            <Pane><Label text="Human Percept" /></Pane>
+            <Pane><Label text="RL.Human Percept" /></Pane>
             <VBox>
                 <HBox>
                     <StackPane>
@@ -62,12 +62,12 @@
                 </HBox>
             </VBox>
 
-            <Pane><Label text="Human Progress Log" /></Pane>
+            <Pane><Label text="RL.Human Progress Log" /></Pane>
             <ListView fx:id="hProgress" />
         </VBox>
 
         <VBox>
-            <Pane><Label text="Wumpus Percept" /></Pane>
+            <Pane><Label text="RL.Wumpus Percept" /></Pane>
             <VBox>
                 <HBox>
                     <StackPane>
@@ -99,7 +99,7 @@
                 </HBox>
             </VBox>
 
-            <Pane><Label text="Wumpus Progress Log" /></Pane>
+            <Pane><Label text="RL.Wumpus Progress Log" /></Pane>
             <ListView fx:id="wProgress" />
         </VBox>
 

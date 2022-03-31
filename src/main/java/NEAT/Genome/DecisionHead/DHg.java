@@ -42,9 +42,9 @@ public class DHg extends Genome {
         for (DHng node : nodes.getData()) node.episodeDone();
     }
 
-    public void randomParams() {
-        for (DHng n : nodes.getData()) n.randomBias();
-        for (DHcg c : cons.getData()) c.randomWeights();
+    public void randomParams(double p) {
+        for (DHng n : nodes.getData()) n.randomBias(p);
+        for (DHcg c : cons.getData()) c.randomWeights(p);
     }
 
     public double[] feed(int t, double[] inputs, char select) {

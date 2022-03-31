@@ -6,8 +6,8 @@ module AIR {
     requires ejml.simple;
     requires ejml.ddense;
     requires ejml.core;
-    opens Supervisors to ejml.simple, ejml.ddense, ejml.core;
-    opens Environment.Controllers to javafx.fxml, javafx.graphics, javafx.controls, java.sql;
-    exports Environment.Controllers;
-    exports Supervisors;
+    opens GANAS to ejml.simple, ejml.ddense, ejml.core;
+    opens RL.Controllers to javafx.fxml, javafx.graphics, javafx.controls, java.sql;
+    exports RL.Controllers;
+    exports GANAS;
 }

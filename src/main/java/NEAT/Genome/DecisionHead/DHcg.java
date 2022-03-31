@@ -11,18 +11,18 @@ public class DHcg extends ConGene {
 
     public DHcg(NodeGene fG, NodeGene tG) {
         super(fG, tG);
-        randomWeights();
+        randomWeights(0);
     }
 
     public DHcg(NodeGene fG, NodeGene tG, char proxy) {
         super(fG, tG, proxy);
     }
 
-    public void randomWeights() {
+    public void randomWeights(double p) {
         // initialize weights independently and uniformly from -1 to 1
-        actorWeight = Math.random() * 2 - 1;
-        criticWeight = Math.random() * 2 - 1;
-        seerWeight = Math.random() * 2 - 1;
+        actorWeight = p * actorWeight + (1 - p) * (Math.random() * 2 - 1);
+        criticWeight = p * criticWeight + (1 - p) * (Math.random() * 2 - 1);
+        seerWeight = p * seerWeight + (1 - p) * (Math.random() * 2 - 1);
         // these moments start at 0 according to Moment constructor
         actorMoment = new Adam.Moment();
         criticMoment = new Adam.Moment();

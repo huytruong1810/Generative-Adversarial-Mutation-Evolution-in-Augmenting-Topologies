@@ -12,7 +12,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Environment.Controllers.BaggingController">
+      fx:controller="RL.Controllers.BaggingController">
 
     <ScrollPane>
         <VBox fx:id="MembersBox" />
@@ -36,7 +36,7 @@
             </StackPane>
 
             <VBox>
-                <Pane><Label text="Human Percept" /></Pane>
+                <Pane><Label text="RL.Human Percept" /></Pane>
                 <VBox>
                     <HBox>
                         <StackPane>
@@ -68,12 +68,12 @@
                     </HBox>
                 </VBox>
 
-                <Pane><Label text="Human Progress Log" /></Pane>
+                <Pane><Label text="RL.Human Progress Log" /></Pane>
                 <ListView fx:id="hProgress" />
             </VBox>
 
             <VBox>
-                <Pane><Label text="Wumpus Percept" /></Pane>
+                <Pane><Label text="RL.Wumpus Percept" /></Pane>
                 <VBox>
                     <HBox>
                         <StackPane>
@@ -105,7 +105,7 @@
                     </HBox>
                 </VBox>
 
-                <Pane><Label text="Wumpus Progress Log" /></Pane>
+                <Pane><Label text="RL.Wumpus Progress Log" /></Pane>
                 <ListView fx:id="wProgress" />
             </VBox>
 

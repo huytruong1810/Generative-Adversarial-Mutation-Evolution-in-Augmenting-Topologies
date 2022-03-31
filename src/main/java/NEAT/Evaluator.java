@@ -1,7 +1,7 @@
 package NEAT;
 
-import Environment.Simulators.TestRoom;
-import Environment.Simulators.TrainRoom;
+import RL.Simulators.TestRoom;
+import RL.Simulators.TrainRoom;
 
 import java.util.concurrent.Callable;
 

@@ -27,6 +27,19 @@ public class GateTuple {
         outputMoment = new Adam.Moment();
     }
 
+    public GateTuple(GateTuple old, double p) {
+        // p = 1 means memory past parameters, p = 0 means new random parameters
+        forgetValue = p * (old != null ? old.forgetValue : 0) + (1 - p) * (Math.random() * 2 - 1);
+        inputValue = p * (old != null ? old.inputValue : 0) + (1 - p) * (Math.random() * 2 - 1);
+        candidateValue = p * (old != null ? old.candidateValue : 0) + (1 - p) * (Math.random() * 2 - 1);
+        outputValue = p * (old != null ? old.outputValue : 0) + (1 - p) * (Math.random() * 2 - 1);
+        // start new moments
+        forgetMoment = new Adam.Moment();
+        inputMoment = new Adam.Moment();
+        candidateMoment = new Adam.Moment();
+        outputMoment = new Adam.Moment();
+    }
+
     public void ones() { // need not reset moments
         forgetValue = inputValue = candidateValue = outputValue = 1.0;
     }

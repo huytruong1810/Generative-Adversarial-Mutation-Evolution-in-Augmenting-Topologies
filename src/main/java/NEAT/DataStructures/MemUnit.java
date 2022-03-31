@@ -7,8 +7,8 @@ public class MemUnit {
     private boolean complete;
     private final int _t /*time step*/;
 
-    private int _r /*reward*/, _a /*INDEXED taken action*/;
-    private double _V /*state value*/;
+    private int _a /*INDEXED taken action*/;
+    private double _r /*reward*/, _V /*state value*/;
     private double[] _P /*action probability distribution*/, _predXNext /*next state prediction*/;
 
     private double[] _aX /*input state*/, _ah /*hidden state*/, _aC /*cell state*/, _atanhC /*convenient cache*/;
@@ -44,13 +44,13 @@ public class MemUnit {
         else throw new IllegalStateException("Invalid preferences during completion of this memory unit.");
     }
 
-    public void set_r(int r) { _r = r; }
+    public void set_r(double r) { _r = r; }
     public void setOutputs(int a, double V, double[] P, double[] predXNext) { _a = a; _V = V; _P = P; _predXNext = predXNext; }
 
     public boolean isComplete() { return complete; }
     public int t() { return _t; }
-    public int r() { return _r; }
     public int a() { return _a; }
+    public double r() { return _r; }
     public double V() { return _V; }
     public double[] P() { return _P; }
     public double[] predXNext() { return _predXNext; }

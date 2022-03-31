@@ -21,7 +21,7 @@ public class DHng extends NodeGene {
 
     public DHng(int IN) {
         super(IN);
-        randomBias();
+        randomBias(0);
         actorA = Type.LINEAR;
         criticA = Type.LINEAR;
         seerA = Type.LINEAR;
@@ -31,10 +31,10 @@ public class DHng extends NodeGene {
         super(IN, proxy);
     }
 
-    public void randomBias() {
-        actorB = Math.random() * 2 - 1;
-        criticB = Math.random() * 2 - 1;
-        seerB = Math.random() * 2 - 1;
+    public void randomBias(double p) {
+        actorB = p * actorB + (1 - p) * (Math.random() * 2 - 1);
+        criticB = p * criticB + (1 - p) * (Math.random() * 2 - 1);
+        seerB = p * seerB + (1 - p) * (Math.random() * 2 - 1);
         actorMoment = new Adam.Moment();
         criticMoment = new Adam.Moment();
         seerMoment = new Adam.Moment();

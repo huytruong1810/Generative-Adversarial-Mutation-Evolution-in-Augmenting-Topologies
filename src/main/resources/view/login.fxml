@@ -8,7 +8,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tooltip?>
 <HBox fx:id="RootBox" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Environment.Controllers.LoginController"
+      fx:controller="RL.Controllers.LoginController"
       prefHeight="280.0" prefWidth="850.0">
 
     <VBox>

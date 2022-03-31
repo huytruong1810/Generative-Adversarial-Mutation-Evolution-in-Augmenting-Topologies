@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Separator?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Environment.Controllers.BuildEnvController">
+      fx:controller="RL.Controllers.BuildEnvController">
 
     <HBox fx:id="MenuBox" alignment="CENTER">
         <Button text="World Size" disable="true" />
@@ -32,10 +32,10 @@
             <Label text="Gold" />
             <ImageView fx:id="GoldImg" />
             <Separator />
-            <Label text="Human" />
+            <Label text="RL.Human" />
             <ImageView fx:id="HumanImg" />
             <Separator />
-            <Label text="Wumpus" />
+            <Label text="RL.Wumpus" />
             <ImageView fx:id="WumpusImg" />
             <Separator />
         </VBox>

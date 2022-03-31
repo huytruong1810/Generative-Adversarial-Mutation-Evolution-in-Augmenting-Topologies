@@ -99,11 +99,7 @@ public class MLP {
      */
     public void actorBP(int t, double A, double[] probs, int c, HashMap<Integer, Double> backGrads) {
         for (int aI : actorOI)
-            outputL[aI].backPropdL_dz(t, aI != c ? A * -clip(probs[aI]) : A * clip(1 - probs[c]), 'a', backGrads);
-    }
-
-    private double clip(double val) {
-        return Math.min(val, 0.5);
+            outputL[aI].backPropdL_dz(t, A * (aI != c ? -probs[aI] : 1 - probs[c]), 'a', backGrads);
     }
 
     /**

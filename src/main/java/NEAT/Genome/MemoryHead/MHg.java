@@ -40,9 +40,9 @@ public class MHg extends Genome {
         for (MHng node : nodes.getData()) node.episodeDone();
     }
 
-    public void randomParams() {
-        for (MHng n : nodes.getData()) n.randomBias();
-        for (MHcg c : cons.getData()) c.randomWeights();
+    public void randomParams(double p) {
+        for (MHng n : nodes.getData()) n.randomBias(p);
+        for (MHcg c : cons.getData()) c.randomWeights(p);
     }
 
     public MemUnit feed(MemUnit prevUnit, double[] input, char select) { return phenotype.forward(prevUnit, input, select); }

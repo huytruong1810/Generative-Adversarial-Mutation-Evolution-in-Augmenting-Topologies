@@ -1,6 +1,7 @@
 package NEAT;
 
 import NEAT.DataStructures.SecuredList;
+import NEAT.DataStructures.SecuredMap;
 import NEAT.Genome.DecisionHead.DHcg;
 import NEAT.Genome.DecisionHead.DHng;
 import NEAT.Genome.ConGene;
@@ -8,100 +9,146 @@ import NEAT.Genome.MemoryHead.MHcg;
 import NEAT.Genome.MemoryHead.MHng;
 import NEAT.Genome.NodeGene;
 
-public class GenePool { // only keep proxies, no references to full gene
+public class GenePool { // only keep proxies, no references to functional genes
 
-    public enum NodeType { MRU, ACU }
-    public enum ConType { MRU, ACU }
+    public enum NodeType {MH, DH}
+    public enum ConType {MH, DH}
 
     public static final int MAX_NODE = (int) Math.pow(2, 5);
 
-    private int MRU_cap;
-    private int ACU_cap;
+    private int MH_cap;
+    private int DH_cap;
 
-    private final SecuredList<MHcg> MRUConAnc; // keep record of IN of each con
-    private final SecuredList<MHng> MRUNodeAnc; // only keep the original frame nodes
+    private final SecuredList<MHcg> MHConAnc; // keep record of IN of each con
+    private final SecuredMap<ConGene, MHng> MHNodeAnc; // keep record of IN of each node on each connection, except bases
 
-    private final SecuredList<DHcg> ACUConAnc; // keep record of IN of each con
-    private final SecuredList<DHng> ACUNodeAnc; // only keep the original frame nodes
+    private final SecuredList<DHcg> DHConAnc; // keep record of IN of each con
+    private final SecuredMap<ConGene, DHng> DHNodeAnc; // keep record of IN of each node on each connection, except bases
 
     public GenePool() {
 
-        MRU_cap = ACU_cap = 0;
+        MH_cap = DH_cap = 0; // IN starts at 1
 
-        MRUConAnc = new SecuredList<>();
-        MRUNodeAnc = new SecuredList<>();
+        MHConAnc = new SecuredList<>();
+        MHNodeAnc = new SecuredMap<>();
 
-        ACUConAnc = new SecuredList<>();
-        ACUNodeAnc = new SecuredList<>();
+        DHConAnc = new SecuredList<>();
+        DHNodeAnc = new SecuredMap<>();
 
     }
 
-    public int getMRU_cap() {
-        return MRU_cap;
+    public int getMH_cap() {
+        return MH_cap;
     }
 
-    public int getACU_cap() {
-        return ACU_cap;
+    public int getDH_cap() {
+        return DH_cap;
     }
 
     public void clear() {
-        MRU_cap = ACU_cap = 0;
-        MRUNodeAnc.clear();
-        MRUConAnc.clear();
-        ACUNodeAnc.clear();
-        ACUConAnc.clear();
+        MH_cap = DH_cap = 0;
+        MHNodeAnc.clear();
+        MHConAnc.clear();
+        DHNodeAnc.clear();
+        DHConAnc.clear();
+    }
+
+    /**
+     * Retrieve the innovation number of node in between the connection.
+     * If the connection does not have a node in between, returns -1
+     * @param con - the connection
+     * @param type - type of node gene
+     * @return innovation number of node in between connection or -1
+     */
+    public int getBetweenNodeIN(ConGene con, NodeType type) {
+        switch (type) {
+            case MH: return (MHNodeAnc.containsKey(con)) ? MHNodeAnc.get(con).getIN() : -1;
+            case DH: return (DHNodeAnc.containsKey(con)) ? DHNodeAnc.get(con).getIN() : -1;
+            default: throw new IllegalStateException("Unknown node ancestry access.");
+        }
     }
 
     /**
      * NOTE: Innovation numbers start from 1 but is indexed 0 in ancestry record
      * Make a new node gene with new innovation number and record it in the ancestry
-     * @param i - node index if possible, if not, it is < 0
+     * @param IN - innovation number, should be >= 0 for base nodes
+     * @param con - associated connection, should be non-null for non-base nodes
      * @param x - node gene x coor if i < 0, if not, ignore
      * @param y - node gene y coor if i < 0, if not, ignore
      * @param type - type of node gene
      * @param isBase - is this a base node
-     * @return a new random node gene with recorded IN
+     * @return a new random node gene with recorded IN or null if adding a new node and maximum is reached
      */
-    public NodeGene logNode(int i, double x, double y, NodeType type, boolean isBase) {
+    public NodeGene logNode(int IN, ConGene con, double x, double y, NodeType type, boolean isBase) {
 
         NodeGene n;
+        NodeGene proxyNode;
 
-        if (i < 0) {
+        if (isBase) { // base nodes are the roots, amount of base nodes is never higher than maximum node allowed
+            if (con != null) throw new IllegalStateException("Base nodes should not have associated connections.");
             switch (type) {
-                case MRU:
-                    n = new MHng(++MRU_cap);
-                    if (isBase) MRUNodeAnc.add(new MHng(n, x, y)); // save xy proxy of base node
+                case MH:
+                    if (MHNodeAnc.containsRoot(IN)) { // base node already exists in ancestry
+                        proxyNode = MHNodeAnc.getRoot(IN);
+                        n = new MHng(proxyNode.getIN());
+                        x = proxyNode.getX();
+                        y = proxyNode.getY();
+                    } else { // this node is a new root
+                        n = new MHng(++MH_cap); // give it a unique IN
+                        MHNodeAnc.putRoot(MH_cap, new MHng(n, x, y)); // save xy proxy
+                    }
                     break;
-                case ACU:
-                    n = new DHng(++ACU_cap);
-                    if (isBase) ACUNodeAnc.add(new DHng(n, x, y)); // save xy proxy of base node
+                case DH:
+                    if (DHNodeAnc.containsRoot(IN)) { // base node already exists in ancestry
+                        proxyNode = DHNodeAnc.getRoot(IN);
+                        n = new DHng(proxyNode.getIN());
+                        x = proxyNode.getX();
+                        y = proxyNode.getY();
+                    } else { // this node is a new root
+                        n = new DHng(++DH_cap); // give it a unique IN
+                        DHNodeAnc.putRoot(DH_cap, new DHng(n, x, y)); // save xy proxy
+                    }
+                    break;
+                default: throw new IllegalStateException("Unknown node ancestry access.");
+            }
+        } else {
+            if (IN > 0) throw new IllegalStateException("IN should not be specified for non-base nodes.");
+            if (con == null) throw new IllegalStateException("Non-base nodes must have associated connections.");
+            switch (type) {
+                case MH:
+                    if (MHNodeAnc.containsKey(con)) { // node already exists in ancestry
+                        proxyNode = MHNodeAnc.get(con);
+                        n = new MHng(proxyNode.getIN());
+                        x = proxyNode.getX();
+                        y = proxyNode.getY();
+                    } else { // this node is new in between this connection
+                        if (MH_cap + 1 > MAX_NODE) return null;
+                        n = new MHng(++MH_cap);
+                        // save proxy key and proxy value
+                        MHNodeAnc.put(new MHcg(new MHng(con.getFG()), new MHng(con.getTG()), 'p'), new MHng(n, x, y));
+                    }
+                    break;
+                case DH:
+                    if (DHNodeAnc.containsKey(con)) { // node already exists in ancestry
+                        proxyNode = DHNodeAnc.get(con);
+                        n = new DHng(proxyNode.getIN());
+                        x = proxyNode.getX();
+                        y = proxyNode.getY();
+                    } else { // this node is new in between this connection
+                        if (DH_cap + 1 > MAX_NODE) return null;
+                        n = new DHng(++DH_cap);
+                        // save proxy key and proxy value
+                        DHNodeAnc.put(new DHcg(new DHng(con.getFG()), new DHng(con.getTG()), 'p'), new DHng(n, x, y));
+                    }
                     break;
                 default:
                     throw new IllegalStateException("Unknown node ancestry access.");
             }
-            n.setX(x);
-            n.setY(y);
         }
-        else {
-            if (!isBase) throw new IllegalStateException("Node ancestry does not keep non-base node.");
-            NodeGene proxyNode;
-            switch (type) {
-                case MRU:
-                    proxyNode = MRUNodeAnc.get(i);
-                    n = new MHng(proxyNode.getIN());
-                    break;
-                case ACU:
-                    proxyNode = ACUNodeAnc.get(i);
-                    n = new DHng(proxyNode.getIN());
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown node ancestry access.");
-            }
-            n.setX(proxyNode.getX());
-            n.setY(proxyNode.getY());
-        }
+        n.setX(x); // these coordinates could have been changed due to retrieving
+        n.setY(y);
 
-        return n; // no need to clone
+        return n;
 
     }
 
@@ -112,7 +159,7 @@ public class GenePool { // only keep proxies, no references to full gene
      * else, make a new ancestral entry
      * @param a - node gene
      * @param b - node gene
-     * @return a new random connection gene with recorded IN
+     * @return a new random connection gene with recorded IN or null if same level connection
      */
     public ConGene logCon(NodeGene a, NodeGene b, ConType type) {
 
@@ -125,32 +172,30 @@ public class GenePool { // only keep proxies, no references to full gene
         else { f = b; t = a; }
 
         switch (type) {
-            case MRU:
+            case MH:
                 c = new MHcg(f, t);
-                if (MRUConAnc.contains((MHcg) c)) { // basing on the endpoints
-                    MHcg proxyCon = MRUConAnc.get((MHcg) c);
+                if (MHConAnc.contains((MHcg) c)) { // basing on the endpoints
+                    MHcg proxyCon = MHConAnc.get((MHcg) c);
                     c.setIN(proxyCon.getIN());
-                }
-                else { // connection don't exist in ancestry
-                    int cIN = MRUConAnc.size() + 1;
+                } else { // connection don't exist in ancestry
+                    int cIN = MHConAnc.size() + 1;
                     c.setIN(cIN);
                     MHcg proxyCon = new MHcg(new MHng(f), new MHng(t), 'p');
                     proxyCon.setIN(cIN);
-                    MRUConAnc.add(proxyCon); // save proxy
+                    MHConAnc.add(proxyCon); // save proxy
                 }
                 break;
-            case ACU:
+            case DH:
                 c = new DHcg(f, t);
-                if (ACUConAnc.contains((DHcg) c)) { // basing on the endpoints
-                    DHcg proxyCon = ACUConAnc.get((DHcg) c);
+                if (DHConAnc.contains((DHcg) c)) { // basing on the endpoints
+                    DHcg proxyCon = DHConAnc.get((DHcg) c);
                     c.setIN(proxyCon.getIN());
-                }
-                else { // connection don't exist in ancestry
-                    int cIN = ACUConAnc.size() + 1;
+                } else { // connection don't exist in ancestry
+                    int cIN = DHConAnc.size() + 1;
                     c.setIN(cIN);
                     DHcg proxyCon = new DHcg(new DHng(f), new DHng(t), 'p');
                     proxyCon.setIN(cIN);
-                    ACUConAnc.add(proxyCon); // save proxy
+                    DHConAnc.add(proxyCon); // save proxy
                 }
                 break;
             default: throw new IllegalStateException("Unknown connection ancestry access.");

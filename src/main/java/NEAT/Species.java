@@ -1,13 +1,15 @@
 package NEAT;
 
-import Environment.Simulators.TestRoom;
-import Environment.Simulators.TrainRoom;
+import GANAS.GAN;
+import RL.Simulators.TestRoom;
+import RL.Simulators.TrainRoom;
 import NEAT.DataStructures.SecuredList;
 import NEAT.Genome.DecisionHead.DHcg;
 import NEAT.Genome.MemoryHead.MHcg;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,14 +28,21 @@ public class Species {
     private final SecuredList<Individual> population;
 
     private Individual champion;
+    private final GAN supervisor;
 
-    public Species(Individual i, int pred) {
+    public Species(Individual i, int pred, GenePool genePoolRef) {
+
         ID = GlobalID++;
         predID = pred;
         score = 0;
         population = new SecuredList<>();
-        champion = null; // only become relevant after compete
-        i.setSpecies(this); repr = i; population.add(i);
+
+        champion = null; // only relevant after population sorting
+        repr = i;
+        add(i);
+
+        supervisor = new GAN(genePoolRef);
+
     }
 
     public int size() { return population.size(); }
@@ -42,7 +51,7 @@ public class Species {
     public Individual getRepr() { return repr; }
     public Individual getChampion() { return champion; }
 
-    public void recruit(Individual i) {
+    public void add(Individual i) {
         i.setSpecies(this);
         population.add(i);
     }
@@ -59,17 +68,10 @@ public class Species {
             futures.add(i, threadPool.submit(new Evaluator(population.get(i), trainRoom, testRoom, unifiedBlueprint)));
         }
 
-        // all competitors are equal before the competition
-        champion = null;
         double speciesSum = 0; // accumulate each individual's score
         try {
             for (int i = 0; i < n; ++i) {
                 double avgScore = futures.get(i).get(); // blocking call until evaluator i-th finishes
-                // change champion when better is found or first time announcing one
-                if (champion == null) champion = population.get(i);
-                else { // repr can also become the champion
-                    if (champion.getScore() <= avgScore) champion = population.get(i); // bubble champion up last because evict
-                }
                 speciesSum += avgScore;
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -88,17 +90,41 @@ public class Species {
         population.clear();
     }
 
-    public void evict() { // champion is never evicted because of its max score
+    public void evict() {
+        // ascending sorting by score so we remove weak individuals bottom-up
         population.getData().sort(Comparator.comparingDouble(Individual::getScore));
+        // champion is at top and never get evicted
+        champion = population.get(size() - 1);
         int part = (int) (NEAT.evictRate * size());
         for (int i = 0; i < part; ++i) {
             Individual toBeEvicted = population.get(0); // this could be repr
             if (toBeEvicted == champion) throw new IllegalStateException("Champion cannot be evicted.");
             toBeEvicted.setSpecies(null);
             population.remove(0);
-            // repr is gone so re-elect another within species if needed
+            // if repr was removed, re-elect another within population
             if (toBeEvicted == repr) repr = population.getRandom();
         }
+    }
+
+    public void mutate(Individual i) {
+
+        // start by training the discriminator to differentiate top and G-mutated architectures
+        ArrayList<Double> MH_CELs = new ArrayList<>();
+        ArrayList<Double> DH_CELs = new ArrayList<>();
+        supervisor.trainD(population, i, MH_CELs, DH_CELs);
+//        System.out.println("D " + ID + "-MH: " + MH_CELs);
+//        System.out.println("D " + ID + "-DH: " + DH_CELs);
+
+        // train generator using discriminator
+        HashMap<Integer, ArrayList<Double>> rewards = supervisor.trainG(i, true);
+//        System.out.println("G " + ID + "-MH: " + rewards);
+        rewards = supervisor.trainG(i, false);
+//        System.out.println("G " + ID + "-DH: " + rewards);
+
+        // let generator generate mutations
+        supervisor.GMutate(i, true);
+        supervisor.GMutate(i, false);
+
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -118,7 +144,7 @@ public class Species {
         int E = 0; // number of excess gene
 
         // compute genomic distance between 2 MRUs
-        List<MHcg> mruc1 = individual.getMRU().getCons().getData(), mruc2 = repr.getMRU().getCons().getData();
+        List<MHcg> mruc1 = individual.getMH().getCons().getData(), mruc2 = repr.getMH().getCons().getData();
         int i = 0, j = 0, s1 = mruc1.size(), s2 = mruc2.size();
         N += Math.max(s1, s2);
         while (i < s1 && j < s2) {
@@ -131,7 +157,7 @@ public class Species {
         E += (s1 > s2) ? (s1 - i) : (s2 - j);
 
         // compute genomic distance between 2 ACUs
-        List<DHcg> acuc1 = individual.getACU().getCons().getData(), acuc2 = repr.getACU().getCons().getData();
+        List<DHcg> acuc1 = individual.getDH().getCons().getData(), acuc2 = repr.getDH().getCons().getData();
         i = 0; j = 0; s1 = acuc1.size(); s2 = acuc2.size();
         N += Math.max(s1, s2);
         while (i < s1 && j < s2) {

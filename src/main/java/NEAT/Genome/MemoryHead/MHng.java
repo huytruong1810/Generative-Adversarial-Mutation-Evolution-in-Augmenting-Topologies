@@ -22,17 +22,17 @@ public class MHng extends NodeGene {
 
     public MHng(int IN) {
         super(IN);
-        randomBias();
+        randomBias(0); // new random parameters
     }
 
     public MHng(int IN, char proxy) {
         super(IN, proxy);
     }
 
-    public void randomBias() {
-        actorBiasTuple = new GateTuple();
-        criticBiasTuple = new GateTuple();
-        seerBiasTuple = new GateTuple();
+    public void randomBias(double p) {
+        actorBiasTuple = new GateTuple(actorBiasTuple, p);
+        criticBiasTuple = new GateTuple(criticBiasTuple, p);
+        seerBiasTuple = new GateTuple(seerBiasTuple, p);
     }
 
     public MHng(NodeGene other) {
