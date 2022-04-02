@@ -1,4 +1,4 @@
-# Generative Adversarial in Augmenting Mutation-Evolution
+# Generative Adversarial Mutation-Evolution in Augmenting Topologies
 ### Author: Truong Nguyen Huy - Computer Science - Software Engineering @ University of Illinois at Chicago
 
 ## Abstract
